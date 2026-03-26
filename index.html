@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediMetrics — St. Mary's Performance Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg:         #070c18;
+      --surface:    #0b1120;
+      --card:       #0f1929;
+      --card-h:     #131f33;
+      --border:     #192840;
+      --border-l:   #213554;
+      --accent:     #0ea5e9;
+      --indigo:     #6366f1;
+      --green:      #10b981;
+      --amber:      #f59e0b;
+      --red:        #ef4444;
+      --purple:     #a855f7;
+      --teal:       #14b8a6;
+      --rose:       #f43f5e;
+      --fg:         #dce8ff;
+      --fg-2:       #8aa3c4;
+      --fg-3:       #3d5a80;
+      --sw:         252px;
+      --th:         60px;
+      --r:          12px;
+      --r-sm:       8px;
+      --ease:       0.18s cubic-bezier(.4,0,.2,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── Sidebar ────────────────────────────── */
+    .sb {
+      width: var(--sw);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; height: 100vh;
+      z-index: 200;
+      transition: transform var(--ease);
+    }
+
+    .sb-logo {
+      padding: 18px 20px 16px;
+      display: flex; align-items: center; gap: 11px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sb-icon {
+      width: 38px; height: 38px; flex-shrink: 0;
+      background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 12px rgba(14,165,233,.35);
+    }
+    .sb-text .hospital { font-size: 0.62rem; color: var(--fg-2); letter-spacing:.1em; text-transform:uppercase; }
+    .sb-text .appname  { font-size: 1rem; font-weight: 800; letter-spacing: -.01em; }
+
+    .sb-nav { flex:1; padding: 14px 10px; display:flex; flex-direction:column; gap:2px; overflow-y:auto; }
+    .nav-label {
+      font-size: .6rem; text-transform:uppercase; letter-spacing:.12em;
+      color: var(--fg-3); padding: 10px 10px 4px; margin-top:4px;
+    }
+
+    .nav-btn {
+      display: flex; align-items: center; gap: 9px;
+      padding: 9px 12px; border-radius: var(--r-sm);
+      cursor: pointer; color: var(--fg-2);
+      font-size: .875rem; font-weight: 500;
+      font-family: inherit; border: none; background: none;
+      width: 100%; text-align: left;
+      transition: all var(--ease);
+    }
+    .nav-btn:hover { background: var(--card); color: var(--fg); }
+    .nav-btn.active { background: rgba(14,165,233,.13); color: var(--accent); }
+    .nav-btn svg { flex-shrink:0; width:17px; height:17px; }
+    .nav-pip {
+      margin-left: auto; background: var(--red); color:#fff;
+      font-size:.6rem; font-weight:700; padding:2px 6px; border-radius:99px;
+    }
+
+    .sb-foot { padding: 14px 10px; border-top: 1px solid var(--border); }
+    .sb-user { display:flex; align-items:center; gap:9px; padding:8px; border-radius:var(--r-sm); cursor:pointer; }
+    .sb-avatar {
+      width:32px; height:32px; border-radius:50%; flex-shrink:0;
+      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+      display:flex; align-items:center; justify-content:center;
+      font-size:.7rem; font-weight:800; color:#fff;
+    }
+    .sb-uname { font-size:.82rem; font-weight:600; }
+    .sb-urole { font-size:.68rem; color:var(--fg-2); }
+
+    /* ─── Main ───────────────────────────────── */
+    .main { margin-left: var(--sw); flex:1; display:flex; flex-direction:column; min-height:100vh; }
+
+    /* ─── Topbar ─────────────────────────────── */
+    .topbar {
+      height: var(--th);
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      display:flex; align-items:center; padding: 0 24px; gap:14px;
+      position: sticky; top:0; z-index:100;
+    }
+    .tb-hamburger {
+      display:none; background:none; border:none; color:var(--fg-2); cursor:pointer; padding:4px;
+    }
+    .tb-title { font-size:1.05rem; font-weight:700; }
+    .tb-sub   { font-size:.72rem; color:var(--fg-2); margin-top:1px; }
+    .tb-right { margin-left:auto; display:flex; align-items:center; gap:10px; }
+    .tb-date  { font-size:.75rem; color:var(--fg-2); }
+    .tb-chip  {
+      font-size:.72rem; font-weight:600; padding:4px 10px; border-radius:99px;
+      background:rgba(14,165,233,.12); color:var(--accent);
+      border: 1px solid rgba(14,165,233,.3);
+    }
+
+    /* ─── Content ────────────────────────────── */
+    .content { padding: 22px; flex:1; }
+    .panel { display:none; }
+    .panel.active { display:block; }
+
+    /* ─── KPI Cards ──────────────────────────── */
+    .kpi-row { display:grid; grid-template-columns:repeat(6,1fr); gap:14px; margin-bottom:22px; }
+    .kpi {
+      background:var(--card); border:1px solid var(--border); border-radius:var(--r);
+      padding:18px; position:relative; overflow:hidden;
+      transition: all var(--ease);
+    }
+    .kpi:hover { background:var(--card-h); border-color:var(--border-l); transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,0,0,.35); }
+    .kpi::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+    .kpi.c1::before{background:linear-gradient(90deg,#0ea5e9,#6366f1)}
+    .kpi.c2::before{background:linear-gradient(90deg,#10b981,#0ea5e9)}
+    .kpi.c3::before{background:linear-gradient(90deg,#6366f1,#a855f7)}
+    .kpi.c4::before{background:linear-gradient(90deg,#14b8a6,#10b981)}
+    .kpi.c5::before{background:linear-gradient(90deg,#f59e0b,#f43f5e)}
+    .kpi.c6::before{background:linear-gradient(90deg,#f43f5e,#ef4444)}
+    .kpi-lbl { font-size:.68rem; text-transform:uppercase; letter-spacing:.09em; color:var(--fg-2); margin-bottom:8px; }
+    .kpi-val { font-size:1.9rem; font-weight:900; letter-spacing:-.03em; line-height:1; margin-bottom:7px; font-variant-numeric:tabular-nums; }
+    .kpi-trend { display:flex; align-items:center; gap:4px; font-size:.75rem; font-weight:500; }
+    .up   { color:var(--green); }
+    .down { color:var(--red);   }
+    .flat { color:var(--fg-2);  }
+
+    /* ─── Chart layout ───────────────────────── */
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+    .grid3 { display:grid; grid-template-columns:2fr 1fr 1fr; gap:16px; margin-bottom:16px; }
+
+    .card {
+      background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:18px;
+      transition: border-color var(--ease);
+    }
+    .card:hover { border-color:var(--border-l); }
+    .card-head { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px; }
+    .card-title { font-size:.9rem; font-weight:700; }
+    .card-sub   { font-size:.7rem; color:var(--fg-2); margin-top:2px; }
+    .card-tag   {
+      font-size:.68rem; color:var(--fg-2);
+      background:var(--surface); border:1px solid var(--border);
+      padding:3px 8px; border-radius:99px; white-space:nowrap; flex-shrink:0;
+    }
+    .chart-wrap { position:relative; }
+
+    /* ─── Doctor table ───────────────────────── */
+    .filter-row { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:14px; }
+    .fbtn {
+      padding:5px 13px; border-radius:99px; border:1px solid var(--border);
+      background:var(--card); color:var(--fg-2); font-size:.77rem; font-family:inherit;
+      cursor:pointer; transition:all var(--ease);
+    }
+    .fbtn:hover,.fbtn.on { background:rgba(14,165,233,.13); border-color:rgba(14,165,233,.4); color:var(--accent); }
+
+    .dt { width:100%; border-collapse:collapse; }
+    .dt th {
+      text-align:left; font-size:.67rem; text-transform:uppercase; letter-spacing:.09em;
+      color:var(--fg-2); padding:8px 12px; border-bottom:1px solid var(--border);
+      font-weight:600; white-space:nowrap;
+    }
+    .dt td { padding:11px 12px; border-bottom:1px solid var(--border); font-size:.855rem; vertical-align:middle; }
+    .dt tr:last-child td { border-bottom:none; }
+    .dt tr:hover td { background:var(--card-h); }
+    .dname { font-weight:600; }
+    .ddept { font-size:.7rem; margin-top:2px; }
+
+    .bar-wrap { display:flex; align-items:center; gap:7px; }
+    .bar-track { flex:1; height:5px; background:var(--surface); border-radius:3px; overflow:hidden; min-width:55px; }
+    .bar-fill  { height:100%; border-radius:3px; transition:width .8s cubic-bezier(.4,0,.2,1); }
+    .bar-fill.h { background:linear-gradient(90deg,#10b981,#34d399); }
+    .bar-fill.m { background:linear-gradient(90deg,#f59e0b,#fbbf24); }
+    .bar-fill.l { background:linear-gradient(90deg,#ef4444,#f87171); }
+    .bar-num { font-size:.78rem; color:var(--fg-2); min-width:28px; text-align:right; font-variant-numeric:tabular-nums; }
+
+    .badge {
+      display:inline-flex; align-items:center; padding:2px 7px; border-radius:5px;
+      font-size:.67rem; font-weight:700; white-space:nowrap;
+    }
+    .b-green  { background:rgba(16,185,129,.15); color:#34d399; }
+    .b-amber  { background:rgba(245,158,11,.15);  color:#fbbf24; }
+    .b-red    { background:rgba(239,68,68,.15);   color:#f87171; }
+    .b-blue   { background:rgba(14,165,233,.15);  color:#38bdf8; }
+    .b-purple { background:rgba(168,85,247,.15);  color:#c084fc; }
+    .b-teal   { background:rgba(20,184,166,.15);  color:#2dd4bf; }
+
+    /* ─── Mobile overlay ─────────────────────── */
+    .overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,.65); z-index:199;
+      backdrop-filter:blur(3px);
+    }
+    .overlay.on { display:block; }
+
+    /* ─── Mobile bottom nav ──────────────────── */
+    .bnav {
+      display:none;
+      position:fixed; bottom:0; left:0; right:0;
+      background:var(--surface); border-top:1px solid var(--border);
+      z-index:150; padding:6px 0 max(6px, env(safe-area-inset-bottom));
+    }
+    .bnav-inner { display:flex; justify-content:space-around; }
+    .bnav-btn {
+      display:flex; flex-direction:column; align-items:center; gap:3px;
+      padding:5px 10px; border-radius:8px; cursor:pointer;
+      color:var(--fg-2); font-size:.6rem; font-weight:600;
+      border:none; background:none; font-family:inherit;
+      transition:color var(--ease);
+    }
+    .bnav-btn.active { color:var(--accent); }
+    .bnav-btn svg { width:20px; height:20px; }
+
+    /* ─── Animations ─────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(14px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .au  { animation:fadeUp .38s cubic-bezier(.4,0,.2,1) both; }
+    .d1  { animation-delay:.04s; }
+    .d2  { animation-delay:.08s; }
+    .d3  { animation-delay:.12s; }
+    .d4  { animation-delay:.16s; }
+    .d5  { animation-delay:.20s; }
+    .d6  { animation-delay:.24s; }
+    .d7  { animation-delay:.28s; }
+
+    /* ─── Responsive ─────────────────────────── */
+    @media (max-width: 1100px) {
+      .kpi-row { grid-template-columns:repeat(3,1fr); }
+      .grid3   { grid-template-columns:1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .sb { transform:translateX(-100%); }
+      .sb.open { transform:translateX(0); }
+      .main { margin-left:0; padding-bottom:68px; }
+      .tb-hamburger { display:flex; }
+      .bnav { display:block; }
+      .grid2, .grid3 { grid-template-columns:1fr; }
+      .kpi-row { grid-template-columns:repeat(2,1fr); }
+      .content { padding:14px; }
+      .hide-m { display:none; }
+    }
+    @media (max-width: 480px) {
+      .kpi-row { grid-template-columns:repeat(2,1fr); }
+      .kpi-val { font-size:1.55rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- overlay -->
+<div class="overlay" id="ovl" onclick="closeSB()"></div>
+
+<!-- Sidebar -->
+<aside class="sb" id="sb">
+  <div class="sb-logo">
+    <div class="sb-icon">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M10 3v14M3 10h14" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="sb-text">
+      <div class="hospital">St. Mary's General</div>
+      <div class="appname">MediMetrics</div>
+    </div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="nav-label">Analytics</div>
+    <button class="nav-btn active" id="sn-overview"      onclick="go('overview',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Overview
+    </button>
+    <button class="nav-btn" id="sn-doctors"      onclick="go('doctors',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Doctors
+    </button>
+    <button class="nav-btn" id="sn-readmissions" onclick="go('readmissions',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      Readmissions
+      <span class="nav-pip">!</span>
+    </button>
+    <button class="nav-btn" id="sn-operations"   onclick="go('operations',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Operations
+    </button>
+
+    <div class="nav-label">System</div>
+    <button class="nav-btn" onclick="alert('Reports — coming soon')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Reports
+    </button>
+    <button class="nav-btn" onclick="alert('Settings — coming soon')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </button>
+  </nav>
+
+  <div class="sb-foot">
+    <div class="sb-user">
+      <div class="sb-avatar">JD</div>
+      <div>
+        <div class="sb-uname">Dr. J. Douglas</div>
+        <div class="sb-urole">Chief Medical Officer</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <!-- Topbar -->
+  <header class="topbar">
+    <button class="tb-hamburger" onclick="toggleSB()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div>
+      <div class="tb-title" id="tb-title">Overview</div>
+      <div class="tb-sub">St. Mary's General Hospital</div>
+    </div>
+    <div class="tb-right">
+      <span class="tb-date" id="tb-date"></span>
+      <span class="tb-chip">Q1 2025</span>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- ══ OVERVIEW ══════════════════════════ -->
+    <div class="panel active" id="panel-overview">
+      <!-- KPI row -->
+      <div class="kpi-row">
+        <div class="kpi c1 au d1">
+          <div class="kpi-lbl">Readmission Rate</div>
+          <div class="kpi-val">4.6%</div>
+          <div class="kpi-trend down">↓ 0.2% vs last month</div>
+        </div>
+        <div class="kpi c2 au d2">
+          <div class="kpi-lbl">Avg Efficiency</div>
+          <div class="kpi-val">90.5</div>
+          <div class="kpi-trend up">↑ 1.3 pts vs Q4</div>
+        </div>
+        <div class="kpi c3 au d3">
+          <div class="kpi-lbl">Commitment Rate</div>
+          <div class="kpi-val">89.4</div>
+          <div class="kpi-trend up">↑ 2.1 pts vs Q4</div>
+        </div>
+        <div class="kpi c4 au d4">
+          <div class="kpi-lbl">Bed Occupancy</div>
+          <div class="kpi-val">81%</div>
+          <div class="kpi-trend flat">— stable</div>
+        </div>
+        <div class="kpi c5 au d5">
+          <div class="kpi-lbl">Patient Satisfaction</div>
+          <div class="kpi-val">93.8</div>
+          <div class="kpi-trend up">↑ 0.8 pts</div>
+        </div>
+        <div class="kpi c6 au d6">
+          <div class="kpi-lbl">Avg Length of Stay</div>
+          <div class="kpi-val">4.2d</div>
+          <div class="kpi-trend down">↓ 0.1d improvement</div>
+        </div>
+      </div>
+
+      <!-- Row 1 -->
+      <div class="grid2 au d2">
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-title">Readmission Rate Trend</div><div class="card-sub">Monthly % · Jan–Dec 2024</div></div>
+            <span class="card-tag">Target &lt; 5%</span>
+          </div>
+          <div class="chart-wrap" style="height:210px"><canvas id="ch-readm-trend"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-title">Monthly Patient Volume</div><div class="card-sub">Admissions · Jan–Dec 2024</div></div>
+            <span class="card-tag">Total 21,470</span>
+          </div>
+          <div class="chart-wrap" style="height:210px"><canvas id="ch-volume"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Row 2 -->
+      <div class="grid3 au d3">
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">Department Performance</div><div class="card-sub">Efficiency · Commitment · Satisfaction · Safety</div></div></div>
+          <div class="chart-wrap" style="height:220px"><canvas id="ch-radar"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">Patient Outcomes</div><div class="card-sub">Discharge disposition</div></div></div>
+          <div class="chart-wrap" style="height:220px"><canvas id="ch-outcomes"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">Top Efficiency</div><div class="card-sub">Score / 100</div></div></div>
+          <div class="chart-wrap" style="height:220px"><canvas id="ch-top-eff"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ DOCTORS ════════════════════════════ -->
+    <div class="panel" id="panel-doctors">
+      <div class="grid2 au">
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">Efficiency vs Commitment</div><div class="card-sub">Bubble size = patient volume</div></div></div>
+          <div class="chart-wrap" style="height:260px"><canvas id="ch-scatter"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-title">Readmission Rate by Doctor</div><div class="card-sub">Lower is better</div></div>
+            <span class="card-tag">Target &lt; 5%</span>
+          </div>
+          <div class="chart-wrap" style="height:260px"><canvas id="ch-doc-readm"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card au d2">
+        <div class="card-head"><div class="card-title">Doctor Performance Table</div></div>
+        <div class="filter-row" id="filter-row">
+          <button class="fbtn on" onclick="filterDoc('all',this)">All</button>
+          <button class="fbtn" onclick="filterDoc('Cardiology',this)">Cardiology</button>
+          <button class="fbtn" onclick="filterDoc('Emergency',this)">Emergency</button>
+          <button class="fbtn" onclick="filterDoc('Oncology',this)">Oncology</button>
+          <button class="fbtn" onclick="filterDoc('Surgery',this)">Surgery</button>
+          <button class="fbtn" onclick="filterDoc('Pediatrics',this)">Pediatrics</button>
+          <button class="fbtn" onclick="filterDoc('Neurology',this)">Neurology</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="dt">
+            <thead>
+              <tr>
+                <th>Doctor</th>
+                <th>Efficiency</th>
+                <th>Commitment</th>
+                <th class="hide-m">Patients</th>
+                <th class="hide-m">Readm. Rate</th>
+                <th>Satisfaction</th>
+                <th class="hide-m">Status</th>
+              </tr>
+            </thead>
+            <tbody id="doc-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ READMISSIONS ═══════════════════════ -->
+    <div class="panel" id="panel-readmissions">
+      <div class="grid2 au">
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-title">Readmission Rate Trend</div><div class="card-sub">Monthly with 5% target</div></div>
+          </div>
+          <div class="chart-wrap" style="height:250px"><canvas id="ch-readm2"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">By Department</div><div class="card-sub">Readmission % per department</div></div></div>
+          <div class="chart-wrap" style="height:250px"><canvas id="ch-readm-dept"></canvas></div>
+        </div>
+      </div>
+      <div class="grid2 au d2">
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">Top Readmission Diagnoses</div><div class="card-sub">Volume by primary cause</div></div></div>
+          <div class="chart-wrap" style="height:250px"><canvas id="ch-readm-diag"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">Readmissions by Age Group</div><div class="card-sub">Stacked by readmission window</div></div></div>
+          <div class="chart-wrap" style="height:250px"><canvas id="ch-readm-age"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ OPERATIONS ════════════════════════ -->
+    <div class="panel" id="panel-operations">
+      <div class="grid2 au">
+        <div class="card">
+          <div class="card-head">
+            <div><div class="card-title">Bed Occupancy by Ward</div><div class="card-sub">Current occupancy %</div></div>
+            <span class="card-tag">Alert ≥ 90%</span>
+          </div>
+          <div class="chart-wrap" style="height:250px"><canvas id="ch-beds"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">Average Length of Stay</div><div class="card-sub">Days · monthly trend</div></div></div>
+          <div class="chart-wrap" style="height:250px"><canvas id="ch-los"></canvas></div>
+        </div>
+      </div>
+      <div class="grid2 au d2">
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">Wait Times by Department</div><div class="card-sub">Avg minutes to first assessment</div></div></div>
+          <div class="chart-wrap" style="height:250px"><canvas id="ch-wait"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">Staff Utilization</div><div class="card-sub">Distribution by role</div></div></div>
+          <div class="chart-wrap" style="height:250px"><canvas id="ch-staff"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- Mobile bottom nav -->
+<nav class="bnav">
+  <div class="bnav-inner">
+    <button class="bnav-btn active" id="bn-overview"      onclick="go('overview',this,true)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Overview
+    </button>
+    <button class="bnav-btn" id="bn-doctors"      onclick="go('doctors',this,true)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Doctors
+    </button>
+    <button class="bnav-btn" id="bn-readmissions" onclick="go('readmissions',this,true)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      Readmit
+    </button>
+    <button class="bnav-btn" id="bn-operations"   onclick="go('operations',this,true)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Ops
+    </button>
+  </div>
+</nav>
+
+<script>
+// ══════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+const READM_TREND = [7.2,6.8,7.4,6.5,5.9,6.1,5.7,5.3,4.9,5.1,4.8,4.6];
+const VOLUME      = [1820,1650,1890,1780,1920,1840,2010,1950,1870,1930,1760,1680];
+const LOS         = [4.8,4.6,5.1,4.7,4.5,4.6,4.3,4.4,4.2,4.3,4.1,4.2];
+
+const DOCTORS = [
+  {name:'Dr. Sarah Chen',    dept:'Cardiology', eff:94, comm:92, pts:145, readm:4.2, sat:96},
+  {name:'Dr. James Wilson',  dept:'Emergency',  eff:88, comm:85, pts:312, readm:6.8, sat:89},
+  {name:'Dr. Priya Sharma',  dept:'Oncology',   eff:91, comm:96, pts:98,  readm:5.1, sat:94},
+  {name:'Dr. Michael Torres',dept:'Surgery',    eff:97, comm:88, pts:67,  readm:3.2, sat:98},
+  {name:'Dr. Emma Roberts',  dept:'Pediatrics', eff:89, comm:94, pts:203, readm:2.8, sat:97},
+  {name:'Dr. David Kim',     dept:'Cardiology', eff:85, comm:79, pts:128, readm:7.4, sat:88},
+  {name:'Dr. Lisa Anderson', dept:'Neurology',  eff:93, comm:91, pts:87,  readm:4.9, sat:95},
+  {name:'Dr. Robert Patel',  dept:'Emergency',  eff:82, comm:88, pts:289, readm:8.1, sat:86},
+  {name:'Dr. Maria Gonzalez',dept:'Oncology',   eff:96, comm:97, pts:76,  readm:3.7, sat:99},
+  {name:'Dr. Thomas Lee',    dept:'Surgery',    eff:90, comm:84, pts:54,  readm:4.5, sat:93},
+];
+
+// ══════════════════════════════════════════════
+//  CHART DEFAULTS
+// ══════════════════════════════════════════════
+const D = Chart.defaults;
+D.color                          = '#8aa3c4';
+D.borderColor                    = '#192840';
+D.font.family                    = "'Outfit', sans-serif";
+D.font.size                      = 12;
+D.plugins.legend.labels.boxWidth  = 10;
+D.plugins.legend.labels.padding   = 12;
+D.plugins.tooltip.backgroundColor = '#0b1120';
+D.plugins.tooltip.borderColor     = '#192840';
+D.plugins.tooltip.borderWidth     = 1;
+D.plugins.tooltip.padding         = 10;
+D.plugins.tooltip.titleColor      = '#dce8ff';
+D.plugins.tooltip.bodyColor       = '#8aa3c4';
+
+const C = {
+  blue:'#0ea5e9', indigo:'#6366f1', green:'#10b981',
+  amber:'#f59e0b', red:'#ef4444', purple:'#a855f7',
+  teal:'#14b8a6', rose:'#f43f5e',
+};
+
+function grad(ctx, color, a0='55', a1='00') {
+  const h = ctx.canvas.offsetHeight || 200;
+  const g = ctx.createLinearGradient(0,0,0,h);
+  g.addColorStop(0, color+a0);
+  g.addColorStop(1, color+a1);
+  return g;
+}
+
+// ══════════════════════════════════════════════
+//  OVERVIEW CHARTS
+// ══════════════════════════════════════════════
+function initOverview() {
+  // Readmission trend
+  const c1 = document.getElementById('ch-readm-trend').getContext('2d');
+  new Chart(c1, {
+    type:'line',
+    data:{labels:MONTHS, datasets:[
+      {label:'Readmission %', data:READM_TREND, borderColor:C.blue, backgroundColor:grad(c1,C.blue),
+       borderWidth:2.5, fill:true, tension:0.45, pointRadius:4, pointHoverRadius:6, pointBackgroundColor:C.blue},
+      {label:'Target 5%', data:Array(12).fill(5), borderColor:C.amber+'80', borderWidth:1.5,
+       borderDash:[6,4], pointRadius:0}
+    ]},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'top'}},
+      scales:{
+        y:{min:0,max:10, grid:{color:'#192840'}, ticks:{callback:v=>v+'%'}},
+        x:{grid:{display:false}}
+      }}
+  });
+
+  // Patient volume
+  const c2 = document.getElementById('ch-volume').getContext('2d');
+  new Chart(c2, {
+    type:'bar',
+    data:{labels:MONTHS, datasets:[{
+      label:'Admissions', data:VOLUME,
+      backgroundColor:MONTHS.map((_,i)=>i===11?C.indigo:C.indigo+'55'),
+      borderColor:C.indigo, borderWidth:1, borderRadius:5,
+    }]},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        y:{grid:{color:'#192840'}, ticks:{callback:v=>(v/1000).toFixed(1)+'k'}},
+        x:{grid:{display:false}}
+      }}
+  });
+
+  // Radar
+  const c3 = document.getElementById('ch-radar').getContext('2d');
+  new Chart(c3, {
+    type:'radar',
+    data:{
+      labels:['Efficiency','Commitment','Satisfaction','Throughput','Safety'],
+      datasets:[
+        {label:'Cardiology', data:[89,86,92,78,95], borderColor:C.blue,   backgroundColor:C.blue+'22',  borderWidth:2, pointRadius:3},
+        {label:'Emergency',  data:[85,87,88,96,89], borderColor:C.amber,  backgroundColor:C.amber+'22', borderWidth:2, pointRadius:3},
+        {label:'Surgery',    data:[94,86,96,72,98], borderColor:C.green,  backgroundColor:C.green+'22', borderWidth:2, pointRadius:3},
+        {label:'Oncology',   data:[91,95,94,68,92], borderColor:C.purple, backgroundColor:C.purple+'22',borderWidth:2, pointRadius:3},
+      ]
+    },
+    options:{responsive:true, maintainAspectRatio:false,
+      scales:{r:{min:60,max:100,
+        grid:{color:'#192840'}, angleLines:{color:'#192840'},
+        ticks:{display:false}, pointLabels:{font:{size:11},color:'#8aa3c4'}
+      }},
+      plugins:{legend:{position:'bottom',labels:{font:{size:11}}}}
+    }
+  });
+
+  // Outcomes doughnut
+  const c4 = document.getElementById('ch-outcomes').getContext('2d');
+  new Chart(c4, {
+    type:'doughnut',
+    data:{
+      labels:['Home','Transferred','Rehab','ICU Follow-up','Deceased'],
+      datasets:[{
+        data:[68,12,10,7,3],
+        backgroundColor:[C.green,C.blue,C.teal,C.amber,C.red],
+        borderColor:'#0f1929', borderWidth:3, hoverOffset:8,
+      }]
+    },
+    options:{responsive:true, maintainAspectRatio:false, cutout:'65%',
+      plugins:{
+        legend:{position:'right',labels:{font:{size:11}}},
+        tooltip:{callbacks:{label:c=>` ${c.label}: ${c.parsed}%`}}
+      }}
+  });
+
+  // Top 5 efficiency (horiz bar)
+  const top5 = [...DOCTORS].sort((a,b)=>b.eff-a.eff).slice(0,5);
+  const c5 = document.getElementById('ch-top-eff').getContext('2d');
+  new Chart(c5, {
+    type:'bar',
+    data:{
+      labels:top5.map(d=>d.name.split(' ').slice(-1)[0]),
+      datasets:[{
+        label:'Score', data:top5.map(d=>d.eff),
+        backgroundColor:[C.blue,C.indigo,C.green,C.teal,C.purple],
+        borderRadius:4,
+      }]
+    },
+    options:{indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{min:70,max:100, grid:{color:'#192840'}},
+        y:{grid:{display:false}}
+      }}
+  });
+}
+
+// ══════════════════════════════════════════════
+//  DOCTORS CHARTS
+// ══════════════════════════════════════════════
+function initDoctors() {
+  // Scatter
+  const DCOL = {Cardiology:C.blue,Emergency:C.amber,Oncology:C.purple,Surgery:C.green,Pediatrics:C.teal,Neurology:C.indigo};
+  const depts = [...new Set(DOCTORS.map(d=>d.dept))];
+  const c1 = document.getElementById('ch-scatter').getContext('2d');
+  new Chart(c1, {
+    type:'bubble',
+    data:{datasets:depts.map(dep=>({
+      label:dep,
+      data:DOCTORS.filter(d=>d.dept===dep).map(d=>({x:d.eff,y:d.comm,r:Math.sqrt(d.pts)/2.5})),
+      backgroundColor:DCOL[dep]+'55', borderColor:DCOL[dep], borderWidth:2,
+    }))},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},
+      scales:{
+        x:{min:75,max:100, title:{display:true,text:'Efficiency Score',color:'#8aa3c4'}, grid:{color:'#192840'}},
+        y:{min:70,max:100, title:{display:true,text:'Commitment Rate', color:'#8aa3c4'}, grid:{color:'#192840'}},
+      }}
+  });
+
+  // Doctor readmission bar
+  const sorted = [...DOCTORS].sort((a,b)=>a.readm-b.readm);
+  const c2 = document.getElementById('ch-doc-readm').getContext('2d');
+  new Chart(c2, {
+    type:'bar',
+    data:{
+      labels:sorted.map(d=>d.name.replace('Dr. ','').split(' ').pop()),
+      datasets:[
+        {label:'Readmission %', data:sorted.map(d=>d.readm),
+         backgroundColor:sorted.map(d=>d.readm<4?C.green+'bb':d.readm<6?C.amber+'bb':C.red+'bb'),
+         borderColor:sorted.map(d=>d.readm<4?C.green:d.readm<6?C.amber:C.red),
+         borderWidth:1, borderRadius:4, order:2},
+        {type:'line', label:'Target 5%', data:Array(sorted.length).fill(5),
+         borderColor:C.amber+'80', borderWidth:1.5, borderDash:[5,4], pointRadius:0, order:1},
+      ]
+    },
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'top'}},
+      scales:{
+        y:{min:0,max:10, grid:{color:'#192840'}, ticks:{callback:v=>v+'%'}},
+        x:{grid:{display:false}}
+      }}
+  });
+
+  renderDocTable('all');
+}
+
+// ══════════════════════════════════════════════
+//  READMISSION CHARTS
+// ══════════════════════════════════════════════
+function initReadmissions() {
+  const c1 = document.getElementById('ch-readm2').getContext('2d');
+  new Chart(c1, {
+    type:'line',
+    data:{labels:MONTHS, datasets:[
+      {label:'Readmission %', data:READM_TREND, borderColor:C.red, backgroundColor:grad(c1,C.red,'44'),
+       borderWidth:2.5, fill:true, tension:0.45, pointRadius:5, pointBackgroundColor:C.red},
+      {label:'Target 5%', data:Array(12).fill(5), borderColor:C.green+'80',
+       borderWidth:1.5, borderDash:[6,4], pointRadius:0},
+    ]},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'top'}},
+      scales:{
+        y:{min:0,max:10, grid:{color:'#192840'}, ticks:{callback:v=>v+'%'}},
+        x:{grid:{display:false}}
+      }}
+  });
+
+  const c2 = document.getElementById('ch-readm-dept').getContext('2d');
+  const deptData = {
+    labels:['Emergency','Cardiology','Oncology','Neurology','Surgery','Pediatrics'],
+    vals:[7.4,5.8,4.4,4.9,3.9,2.8],
+  };
+  new Chart(c2, {
+    type:'bar',
+    data:{
+      labels:deptData.labels,
+      datasets:[{
+        label:'Readmission %', data:deptData.vals,
+        backgroundColor:deptData.vals.map(v=>v>=6?C.red+'cc':v>=5?C.amber+'cc':C.green+'cc'),
+        borderColor:deptData.vals.map(v=>v>=6?C.red:v>=5?C.amber:C.green),
+        borderWidth:1, borderRadius:5,
+      }]
+    },
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        y:{min:0,max:10, grid:{color:'#192840'}, ticks:{callback:v=>v+'%'}},
+        x:{grid:{display:false}}
+      }}
+  });
+
+  const c3 = document.getElementById('ch-readm-diag').getContext('2d');
+  new Chart(c3, {
+    type:'bar', indexAxis:'y',
+    data:{
+      labels:['Heart Failure','Pneumonia','COPD','Sepsis','Hip Replacement','Stroke','Diabetes'],
+      datasets:[{
+        label:'Cases', data:[142,118,97,86,64,59,52],
+        backgroundColor:[C.red+'cc',C.red+'aa',C.amber+'cc',C.amber+'aa',C.blue+'cc',C.blue+'aa',C.teal+'cc'],
+        borderRadius:4,
+      }]
+    },
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{x:{grid:{color:'#192840'}},y:{grid:{display:false}}}
+    }
+  });
+
+  const c4 = document.getElementById('ch-readm-age').getContext('2d');
+  new Chart(c4, {
+    type:'bar',
+    data:{
+      labels:['18–30','31–45','46–60','61–75','76+'],
+      datasets:[
+        {label:'< 30 days', data:[12,28,52,98,134], backgroundColor:C.red+'cc',   stack:'s'},
+        {label:'30–90 days',data:[8, 18,34,61,79],  backgroundColor:C.amber+'cc', stack:'s'},
+        {label:'> 90 days', data:[4, 10,20,38,52],  backgroundColor:C.blue+'cc',  stack:'s'},
+      ]
+    },
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'top'}},
+      scales:{
+        y:{stacked:true, grid:{color:'#192840'}},
+        x:{stacked:true, grid:{display:false}}
+      }}
+  });
+}
+
+// ══════════════════════════════════════════════
+//  OPERATIONS CHARTS
+// ══════════════════════════════════════════════
+function initOperations() {
+  const wards   = ['ICU','Cardiology','Oncology','Emergency','Surgery','Pediatrics','Neurology','General'];
+  const bedVals = [92,87,74,89,65,81,78,96];
+
+  const c1 = document.getElementById('ch-beds').getContext('2d');
+  new Chart(c1, {
+    type:'bar',
+    data:{labels:wards, datasets:[{
+      label:'Occupancy %', data:bedVals,
+      backgroundColor:bedVals.map(v=>v>=90?C.red+'cc':v>=80?C.amber+'cc':C.green+'cc'),
+      borderColor:bedVals.map(v=>v>=90?C.red:v>=80?C.amber:C.green),
+      borderWidth:1, borderRadius:5,
+    }]},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        y:{min:0,max:100, grid:{color:'#192840'}, ticks:{callback:v=>v+'%'}},
+        x:{grid:{display:false}}
+      }}
+  });
+
+  const c2 = document.getElementById('ch-los').getContext('2d');
+  new Chart(c2, {
+    type:'line',
+    data:{labels:MONTHS, datasets:[
+      {label:'Avg LOS (days)', data:LOS, borderColor:C.teal, backgroundColor:grad(c2,C.teal,'44'),
+       borderWidth:2.5, fill:true, tension:0.45, pointRadius:4, pointBackgroundColor:C.teal},
+      {label:'Target 4.5d', data:Array(12).fill(4.5), borderColor:C.amber+'80',
+       borderWidth:1.5, borderDash:[5,5], pointRadius:0},
+    ]},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'top'}},
+      scales:{
+        y:{min:3.5,max:6, grid:{color:'#192840'}, ticks:{callback:v=>v+'d'}},
+        x:{grid:{display:false}}
+      }}
+  });
+
+  const c3 = document.getElementById('ch-wait').getContext('2d');
+  const waitDepts = ['Emergency','Oncology','Cardiology','Neurology','Pediatrics','Surgery'];
+  const waitVals  = [34,42,28,38,22,19];
+  new Chart(c3, {
+    type:'bar',
+    data:{labels:waitDepts, datasets:[{
+      label:'Avg Wait (min)', data:waitVals,
+      backgroundColor:waitVals.map(v=>v>=35?C.red+'cc':v>=25?C.amber+'cc':C.green+'cc'),
+      borderColor:waitVals.map(v=>v>=35?C.red:v>=25?C.amber:C.green),
+      borderWidth:1, borderRadius:5,
+    }]},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        y:{grid:{color:'#192840'}, ticks:{callback:v=>v+'m'}},
+        x:{grid:{display:false}}
+      }}
+  });
+
+  const c4 = document.getElementById('ch-staff').getContext('2d');
+  new Chart(c4, {
+    type:'doughnut',
+    data:{
+      labels:['Physicians','Nurses','Specialists','Admin','Support','Residents'],
+      datasets:[{
+        data:[22,38,14,10,9,7],
+        backgroundColor:[C.blue,C.teal,C.indigo,C.amber,C.green,C.purple],
+        borderColor:'#0f1929', borderWidth:3, hoverOffset:8,
+      }]
+    },
+    options:{responsive:true, maintainAspectRatio:false, cutout:'60%',
+      plugins:{
+        legend:{position:'right',labels:{font:{size:11}}},
+        tooltip:{callbacks:{label:c=>` ${c.label}: ${c.parsed}%`}}
+      }}
+  });
+}
+
+// ══════════════════════════════════════════════
+//  DOCTOR TABLE
+// ══════════════════════════════════════════════
+const DBADGE = {
+  Cardiology:'b-blue', Emergency:'b-amber', Oncology:'b-purple',
+  Surgery:'b-green', Pediatrics:'b-teal', Neurology:'b-indigo',
+};
+
+function barC(v){ return v>=90?'h':v>=75?'m':'l'; }
+
+function statusBadge(d) {
+  const avg = (d.eff+d.comm+d.sat)/3;
+  if (avg>=93) return '<span class="badge b-green">Excellent</span>';
+  if (avg>=86) return '<span class="badge b-blue">Good</span>';
+  return '<span class="badge b-amber">Needs Review</span>';
+}
+
+function renderDocTable(filter) {
+  const rows = filter==='all' ? DOCTORS : DOCTORS.filter(d=>d.dept===filter);
+  document.getElementById('doc-tbody').innerHTML = rows.map(d=>`
+    <tr>
+      <td><div class="dname">${d.name}</div><div class="ddept"><span class="badge ${DBADGE[d.dept]||'b-blue'}">${d.dept}</span></div></td>
+      <td><div class="bar-wrap"><div class="bar-track"><div class="bar-fill ${barC(d.eff)}" style="width:${d.eff}%"></div></div><span class="bar-num">${d.eff}</span></div></td>
+      <td><div class="bar-wrap"><div class="bar-track"><div class="bar-fill ${barC(d.comm)}" style="width:${d.comm}%"></div></div><span class="bar-num">${d.comm}</span></div></td>
+      <td class="hide-m">${d.pts}</td>
+      <td class="hide-m"><span class="badge ${d.readm<4?'b-green':d.readm<6?'b-amber':'b-red'}">${d.readm}%</span></td>
+      <td><div class="bar-wrap"><div class="bar-track"><div class="bar-fill ${barC(d.sat)}" style="width:${d.sat}%"></div></div><span class="bar-num">${d.sat}</span></div></td>
+      <td class="hide-m">${statusBadge(d)}</td>
+    </tr>`).join('');
+}
+
+function filterDoc(dept, btn) {
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderDocTable(dept);
+}
+
+// ══════════════════════════════════════════════
+//  TAB SWITCHING
+// ══════════════════════════════════════════════
+const INIT = {};
+const TITLES = {overview:'Overview',doctors:'Doctor Performance',readmissions:'Readmission Analytics',operations:'Hospital Operations'};
+
+function go(tab, btn, isMobile=false) {
+  // panels
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');
+
+  // sidebar highlight
+  ['overview','doctors','readmissions','operations'].forEach(t=>{
+    document.getElementById('sn-'+t)?.classList.remove('active');
+  });
+  if (!isMobile) btn.classList.add('active');
+  else document.getElementById('sn-'+tab)?.classList.add('active');
+
+  // bottom nav highlight
+  ['overview','doctors','readmissions','operations'].forEach(t=>{
+    document.getElementById('bn-'+t)?.classList.remove('active');
+  });
+  document.getElementById('bn-'+tab)?.classList.add('active');
+
+  // title
+  document.getElementById('tb-title').textContent = TITLES[tab];
+
+  // close sidebar on mobile
+  if (isMobile) closeSB();
+
+  // lazy init charts
+  if (!INIT[tab]) {
+    INIT[tab] = true;
+    if (tab==='overview')     initOverview();
+    if (tab==='doctors')      initDoctors();
+    if (tab==='readmissions') initReadmissions();
+    if (tab==='operations')   initOperations();
+  }
+}
+
+// ══════════════════════════════════════════════
+//  SIDEBAR TOGGLE
+// ══════════════════════════════════════════════
+function toggleSB() {
+  document.getElementById('sb').classList.toggle('open');
+  document.getElementById('ovl').classList.toggle('on');
+}
+function closeSB() {
+  document.getElementById('sb').classList.remove('open');
+  document.getElementById('ovl').classList.remove('on');
+}
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+document.getElementById('tb-date').textContent =
+  new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+
+// Boot overview
+initOverview();
+INIT['overview'] = true;
+</script>
+</body>
+</html>

@@ -10,36 +10,34 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     :root {
-      --bg:      #070c18;
-      --surf:    #0b1120;
-      --card:    #0f1929;
-      --card-h:  #131f33;
-      --bdr:     #192840;
-      --bdr-l:   #243654;
-      --accent:  #0ea5e9;
-      --green:   #10b981;
-      --amber:   #f59e0b;
-      --red:     #ef4444;
-      --purple:  #a855f7;
-      --teal:    #14b8a6;
-      --indigo:  #6366f1;
-      --fg:      #dce8ff;
-      --fg2:     #8aa3c4;
-      --fg3:     #3a5070;
-      --r:       12px;
-      --rsm:     8px;
-      --ease:    .18s cubic-bezier(.4,0,.2,1);
+      --bg:     #070c18;
+      --surf:   #0b1120;
+      --card:   #0f1929;
+      --card-h: #131f33;
+      --bdr:    #192840;
+      --bdr-l:  #243654;
+      --accent: #0ea5e9;
+      --green:  #10b981;
+      --amber:  #f59e0b;
+      --red:    #ef4444;
+      --purple: #a855f7;
+      --teal:   #14b8a6;
+      --indigo: #6366f1;
+      --fg:     #dce8ff;
+      --fg2:    #8aa3c4;
+      --fg3:    #3a5070;
+      --r:      12px;
+      --rsm:    8px;
+      --ease:   .18s cubic-bezier(.4,0,.2,1);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { font-size: 16px; -webkit-font-smoothing: antialiased; }
     body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--fg); min-height: 100vh; }
 
-    /* ── Header ─────────────────── */
+    /* ── Header ─── */
     .hdr {
-      background: var(--surf);
-      border-bottom: 1px solid var(--bdr);
-      padding: 0 28px;
-      height: 58px;
+      background: var(--surf); border-bottom: 1px solid var(--bdr);
+      padding: 0 28px; height: 58px;
       display: flex; align-items: center; justify-content: space-between;
       position: sticky; top: 0; z-index: 100;
     }
@@ -50,19 +48,19 @@
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 4px 12px rgba(14,165,233,.3);
     }
-    .hdr-name  { font-size: .62rem; text-transform: uppercase; letter-spacing: .1em; color: var(--fg2); }
-    .hdr-title { font-size: .98rem; font-weight: 800; letter-spacing: -.01em; }
-    .hdr-right { display: flex; align-items: center; gap: 10px; }
+    .hdr-sub  { font-size: .62rem; text-transform: uppercase; letter-spacing: .1em; color: var(--fg2); }
+    .hdr-name { font-size: .98rem; font-weight: 800; letter-spacing: -.01em; }
+    .hdr-right { display: flex; align-items: center; gap: 8px; }
     .chip {
       font-size: .72rem; font-weight: 600; padding: 4px 11px; border-radius: 99px;
       background: rgba(14,165,233,.12); color: var(--accent);
       border: 1px solid rgba(14,165,233,.3);
     }
-    .chip.green { background:rgba(16,185,129,.12); color:var(--green); border-color:rgba(16,185,129,.3); }
-    .chip.amber { background:rgba(245,158,11,.12); color:var(--amber); border-color:rgba(245,158,11,.3); }
+    .chip.g { background: rgba(16,185,129,.12); color: var(--green); border-color: rgba(16,185,129,.3); }
+    .chip.a { background: rgba(245,158,11,.12);  color: var(--amber); border-color: rgba(245,158,11,.3); }
 
-    /* ── KPI strip ──────────────── */
-    .kpi-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 18px 28px 0; }
+    /* ── KPI strip ─── */
+    .kpi-strip { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; padding: 18px 28px 0; }
     .kpi {
       background: var(--card); border: 1px solid var(--bdr); border-radius: var(--r);
       padding: 16px 18px; position: relative; overflow: hidden;
@@ -74,183 +72,206 @@
     .kpi.k3::before { background: linear-gradient(90deg,#6366f1,#a855f7); }
     .kpi.k4::before { background: linear-gradient(90deg,#10b981,#14b8a6); }
     .kpi-lbl { font-size: .67rem; text-transform: uppercase; letter-spacing: .09em; color: var(--fg2); margin-bottom: 6px; }
-    .kpi-val { font-size: 1.8rem; font-weight: 900; letter-spacing: -.03em; line-height: 1; }
-    .kpi-sub { font-size: .72rem; color: var(--fg2); margin-top: 4px; }
+    .kpi-val { font-size: 1.75rem; font-weight: 900; letter-spacing: -.03em; line-height: 1; }
+    .kpi-sub { font-size: .7rem; color: var(--fg2); margin-top: 4px; }
 
-    /* ── Main grid ──────────────── */
+    /* ── Main grid ─── */
     .main { display: grid; grid-template-columns: 360px 1fr; gap: 16px; padding: 16px 28px; }
 
-    /* ── Form panel ─────────────── */
-    .panel {
-      background: var(--card); border: 1px solid var(--bdr); border-radius: var(--r);
-      overflow: hidden;
-    }
+    /* ── Panel ─── */
+    .panel { background: var(--card); border: 1px solid var(--bdr); border-radius: var(--r); overflow: hidden; }
     .panel-head {
-      padding: 14px 18px; border-bottom: 1px solid var(--bdr);
-      font-size: .9rem; font-weight: 700;
+      padding: 13px 18px; border-bottom: 1px solid var(--bdr);
+      font-size: .88rem; font-weight: 700;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .panel-head span { font-size: .72rem; color: var(--fg2); font-weight: 400; }
-    .panel-body { padding: 16px 18px; }
+    .panel-head small { font-size: .7rem; color: var(--fg2); font-weight: 400; }
+    .panel-body { padding: 14px 18px; }
 
-    .form-group { margin-bottom: 12px; }
-    .form-label {
-      display: block; font-size: .72rem; font-weight: 600;
-      text-transform: uppercase; letter-spacing: .07em;
-      color: var(--fg2); margin-bottom: 5px;
+    /* ── CSV Upload ─── */
+    .csv-section { padding: 12px 18px; border-bottom: 1px solid var(--bdr); }
+    .csv-drop {
+      border: 1.5px dashed var(--bdr-l); border-radius: var(--rsm);
+      padding: 14px 12px; text-align: center; cursor: pointer;
+      transition: all var(--ease); background: var(--surf);
+      position: relative;
     }
-    .form-label em { font-style: normal; color: var(--fg3); font-weight: 400; text-transform: none; letter-spacing: 0; }
+    .csv-drop:hover, .csv-drop.over {
+      border-color: var(--accent); background: rgba(14,165,233,.06);
+    }
+    .csv-drop input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .csv-icon { font-size: 1.4rem; margin-bottom: 4px; }
+    .csv-label { font-size: .8rem; color: var(--fg2); }
+    .csv-hint  { font-size: .65rem; color: var(--fg3); margin-top: 2px; }
+    .csv-actions { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+    .csv-merge-lbl {
+      display: flex; align-items: center; gap: 5px;
+      font-size: .72rem; color: var(--fg2); cursor: pointer; user-select: none;
+    }
+    .csv-merge-lbl input { accent-color: var(--accent); }
+    .csv-status { font-size: .7rem; color: var(--green); margin-top: 6px; min-height: 16px; }
 
+    /* ── Form fields ─── */
+    .form-group { margin-bottom: 11px; }
+    .form-label {
+      display: flex; align-items: baseline; justify-content: space-between;
+      font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+      color: var(--fg2); margin-bottom: 4px;
+    }
+    .form-label .goal { font-weight: 400; font-size: .65rem; text-transform: none; letter-spacing: 0; color: var(--green); }
     .finput {
-      width: 100%; padding: 8px 11px; border-radius: var(--rsm);
+      width: 100%; padding: 7px 10px; border-radius: var(--rsm);
       background: var(--surf); border: 1px solid var(--bdr);
       color: var(--fg); font-family: inherit; font-size: .875rem;
-      transition: border-color var(--ease);
-      outline: none;
+      transition: border-color var(--ease); outline: none;
     }
     .finput:focus { border-color: var(--accent); }
     .finput::placeholder { color: var(--fg3); }
-
+    select.finput {
+      appearance: none; cursor: pointer; padding-right: 28px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238aa3c4' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 9px center;
+    }
     .finput-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .axis-label {
+      font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+      color: var(--fg3); padding: 6px 0 8px; border-top: 1px solid var(--bdr);
+      margin-top: 2px; margin-bottom: 2px;
+    }
 
-    /* Select */
-    select.finput { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238aa3c4' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; cursor: pointer; }
-
-    /* Toggle */
-    .toggle-row { display: flex; gap: 10px; flex-wrap: wrap; }
-    .toggle-item { display: flex; align-items: center; gap: 7px; cursor: pointer; }
-    .toggle-item input[type="checkbox"] { display: none; }
+    /* ── Toggles ─── */
+    .toggle-row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .tog-item { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    .tog-item input[type="checkbox"] { display: none; }
     .tog {
-      width: 36px; height: 20px; background: var(--surf); border: 1px solid var(--bdr);
+      width: 34px; height: 18px; background: var(--surf); border: 1px solid var(--bdr);
       border-radius: 99px; position: relative; transition: all var(--ease); flex-shrink: 0;
     }
     .tog::after {
-      content: ''; position: absolute; top: 2px; left: 2px;
-      width: 14px; height: 14px; border-radius: 50%;
-      background: var(--fg3); transition: all var(--ease);
+      content:''; position:absolute; top:2px; left:2px;
+      width:12px; height:12px; border-radius:50%; background:var(--fg3); transition:all var(--ease);
     }
-    input[type="checkbox"]:checked + .tog { background: rgba(14,165,233,.25); border-color: var(--accent); }
-    input[type="checkbox"]:checked + .tog::after { background: var(--accent); transform: translateX(16px); }
-    .toggle-lbl { font-size: .82rem; color: var(--fg2); user-select: none; }
-    .toggle-badge {
-      font-size: .6rem; font-weight: 700; padding: 1px 6px; border-radius: 99px;
-      background: var(--surf); border: 1px solid var(--bdr); color: var(--fg3);
+    input[type="checkbox"]:checked + .tog { background:rgba(14,165,233,.22); border-color:var(--accent); }
+    input[type="checkbox"]:checked + .tog::after { background:var(--accent); transform:translateX(16px); }
+    .tog-lbl { font-size:.8rem; color:var(--fg2); user-select:none; }
+    .tog-pts {
+      font-size:.62rem; font-weight:700; padding:1px 5px; border-radius:99px;
+      background:var(--surf); border:1px solid var(--bdr); color:var(--fg3);
+      transition:all var(--ease);
     }
-    input[type="checkbox"]:checked ~ .toggle-badge { background: rgba(14,165,233,.15); border-color: rgba(14,165,233,.3); color: var(--accent); }
+    input[type="checkbox"]:checked ~ .tog-pts { background:rgba(14,165,233,.15); border-color:rgba(14,165,233,.3); color:var(--accent); }
 
-    /* Score preview */
+    /* ── Score preview ─── */
     .score-preview {
       display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-      margin: 14px 0 12px; padding: 12px; border-radius: var(--rsm);
+      margin: 12px 0 10px; padding: 11px; border-radius: var(--rsm);
       background: var(--surf); border: 1px solid var(--bdr);
     }
     .sp-box { text-align: center; }
-    .sp-lbl { font-size: .62rem; text-transform: uppercase; letter-spacing: .09em; color: var(--fg2); }
-    .sp-val { font-size: 1.6rem; font-weight: 900; letter-spacing: -.03em; line-height: 1.1; margin: 4px 0; }
-    .sp-axis { font-size: .65rem; color: var(--fg3); }
+    .sp-lbl { font-size:.6rem; text-transform:uppercase; letter-spacing:.09em; color:var(--fg2); }
+    .sp-val { font-size:1.55rem; font-weight:900; letter-spacing:-.03em; line-height:1.1; margin:3px 0; }
+    .sp-axis { font-size:.62rem; color:var(--fg3); }
     .sp-quad {
-      grid-column: 1 / -1; text-align: center; padding-top: 8px;
-      border-top: 1px solid var(--bdr); margin-top: 4px;
-      font-size: .78rem; font-weight: 600; color: var(--fg2);
+      grid-column:1/-1; text-align:center; padding-top:7px;
+      border-top:1px solid var(--bdr); margin-top:4px;
+      font-size:.76rem; font-weight:600;
     }
 
-    /* Buttons */
-    .btn-row { display: flex; gap: 8px; }
+    /* ── Buttons ─── */
+    .btn-row { display:flex; gap:8px; }
     .btn {
-      flex: 1; padding: 9px 14px; border-radius: var(--rsm);
-      font-family: inherit; font-size: .84rem; font-weight: 600;
-      cursor: pointer; border: none; transition: all var(--ease);
+      flex:1; padding:9px 14px; border-radius:var(--rsm);
+      font-family:inherit; font-size:.84rem; font-weight:600;
+      cursor:pointer; border:none; transition:all var(--ease);
     }
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-primary:hover { background: #38bdf8; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(14,165,233,.35); }
-    .btn-ghost { background: var(--surf); color: var(--fg2); border: 1px solid var(--bdr); }
-    .btn-ghost:hover { border-color: var(--bdr-l); color: var(--fg); }
+    .btn-primary { background:var(--accent); color:#fff; }
+    .btn-primary:hover { background:#38bdf8; transform:translateY(-1px); box-shadow:0 4px 14px rgba(14,165,233,.35); }
+    .btn-ghost { background:var(--surf); color:var(--fg2); border:1px solid var(--bdr); }
+    .btn-ghost:hover { border-color:var(--bdr-l); color:var(--fg); }
 
-    /* Method toggle */
-    .method-toggle {
-      display: flex; align-items: center; gap: 6px;
-      font-size: .75rem; color: var(--fg2); cursor: pointer;
-      background: none; border: none; font-family: inherit;
-      padding: 10px 0 0; width: 100%; text-align: left;
+    /* ── Methodology ─── */
+    .meth-btn {
+      display:flex; align-items:center; gap:5px;
+      font-size:.73rem; color:var(--fg2); cursor:pointer;
+      background:none; border:none; font-family:inherit;
+      padding:9px 0 0; width:100%; text-align:left;
     }
-    .method-toggle svg { transition: transform var(--ease); }
-    .method-toggle.open svg { transform: rotate(180deg); }
-    .method-body { display: none; margin-top: 10px; font-size: .75rem; color: var(--fg2); line-height: 1.6; }
-    .method-body.open { display: block; }
-    .method-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid var(--bdr); }
-    .method-row:last-child { border-bottom: none; }
-    .method-section { font-size: .67rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--fg3); margin: 8px 0 4px; }
+    .meth-btn svg.arr { margin-left:auto; transition:transform var(--ease); }
+    .meth-btn.open .arr { transform:rotate(180deg); }
+    .meth-body { display:none; margin-top:9px; font-size:.74rem; color:var(--fg2); line-height:1.6; }
+    .meth-body.open { display:block; }
+    .meth-sec { font-size:.63rem; font-weight:700; text-transform:uppercase; letter-spacing:.09em; color:var(--fg3); margin:8px 0 3px; }
+    .meth-row { display:flex; justify-content:space-between; padding:2px 0; border-bottom:1px solid var(--bdr); }
+    .meth-row:last-child { border:none; }
+    .meth-row .goal { color:var(--green); font-weight:600; }
 
-    /* ── Chart panel ─────────────── */
-    .chart-wrap { position: relative; width: 100%; height: 100%; min-height: 480px; }
-    .chart-wrap canvas { position: absolute; inset: 0; }
+    /* ── Chart panel ─── */
+    .chart-panel { background:var(--card); border:1px solid var(--bdr); border-radius:var(--r); display:flex; flex-direction:column; }
+    .chart-inner { flex:1; padding:16px; min-height:480px; position:relative; }
+    .chart-inner canvas { position:absolute; inset:0; }
 
-    /* ── Table ──────────────────── */
-    .table-section { padding: 0 28px 28px; }
-    .tbl-wrap { background: var(--card); border: 1px solid var(--bdr); border-radius: var(--r); overflow: hidden; }
-    .tbl-head { padding: 14px 18px; border-bottom: 1px solid var(--bdr); display: flex; align-items: center; justify-content: space-between; }
-    .tbl-title { font-size: .9rem; font-weight: 700; }
-    .tbl { width: 100%; border-collapse: collapse; }
+    /* ── Quadrant legend ─── */
+    .q-legend {
+      display:grid; grid-template-columns:1fr 1fr; gap:8px;
+      padding:10px 18px 14px; border-top:1px solid var(--bdr);
+    }
+    .q-item { display:flex; align-items:flex-start; gap:7px; }
+    .q-dot  { width:9px; height:9px; border-radius:2px; flex-shrink:0; margin-top:3px; }
+    .q-name { font-size:.76rem; font-weight:700; }
+    .q-desc { font-size:.66rem; color:var(--fg2); margin-top:1px; }
+
+    /* ── Table ─── */
+    .tbl-section { padding: 0 28px 28px; }
+    .tbl-wrap { background:var(--card); border:1px solid var(--bdr); border-radius:var(--r); overflow:hidden; }
+    .tbl-head { padding:13px 18px; border-bottom:1px solid var(--bdr); display:flex; align-items:center; justify-content:space-between; }
+    .tbl-title { font-size:.88rem; font-weight:700; }
+    .tbl { width:100%; border-collapse:collapse; }
     .tbl th {
-      text-align: left; font-size: .64rem; text-transform: uppercase;
-      letter-spacing: .09em; color: var(--fg2); padding: 9px 14px;
-      border-bottom: 1px solid var(--bdr); font-weight: 600; white-space: nowrap;
-      background: var(--surf);
+      text-align:left; font-size:.63rem; text-transform:uppercase; letter-spacing:.09em;
+      color:var(--fg2); padding:9px 14px; border-bottom:1px solid var(--bdr);
+      font-weight:600; white-space:nowrap; background:var(--surf);
     }
-    .tbl td { padding: 10px 14px; border-bottom: 1px solid var(--bdr); font-size: .84rem; vertical-align: middle; }
-    .tbl tr:last-child td { border-bottom: none; }
-    .tbl tr:hover td { background: var(--card-h); }
-    .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 7px; flex-shrink: 0; }
+    .tbl td { padding:9px 14px; border-bottom:1px solid var(--bdr); font-size:.83rem; vertical-align:middle; }
+    .tbl tr:last-child td { border-bottom:none; }
+    .tbl tr:hover td { background:var(--card-h); }
 
-    .bar-w { display: flex; align-items: center; gap: 7px; }
-    .bar-t { flex: 1; height: 5px; background: var(--surf); border-radius: 3px; overflow: hidden; min-width: 50px; }
-    .bar-f { height: 100%; border-radius: 3px; }
-    .bar-n { font-size: .76rem; color: var(--fg2); font-family: 'JetBrains Mono', monospace; min-width: 28px; text-align: right; }
-
+    .dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; }
+    .bar-w { display:flex; align-items:center; gap:6px; }
+    .bar-t { flex:1; height:5px; background:var(--surf); border-radius:3px; overflow:hidden; min-width:44px; }
+    .bar-f { height:100%; border-radius:3px; }
+    .bar-n { font-size:.74rem; color:var(--fg2); font-family:'JetBrains Mono',monospace; min-width:26px; text-align:right; }
     .badge {
-      display: inline-flex; align-items: center; padding: 2px 8px;
-      border-radius: 5px; font-size: .67rem; font-weight: 700;
+      display:inline-flex; align-items:center; padding:2px 7px;
+      border-radius:5px; font-size:.65rem; font-weight:700;
     }
-    .b-green  { background: rgba(16,185,129,.15); color: #34d399; }
-    .b-blue   { background: rgba(14,165,233,.15); color: #38bdf8; }
-    .b-amber  { background: rgba(245,158,11,.15);  color: #fbbf24; }
-    .b-red    { background: rgba(239,68,68,.15);   color: #f87171; }
+    .b-green { background:rgba(16,185,129,.15); color:#34d399; }
+    .b-blue  { background:rgba(14,165,233,.15); color:#38bdf8; }
+    .b-amber { background:rgba(245,158,11,.15);  color:#fbbf24; }
+    .b-red   { background:rgba(239,68,68,.15);   color:#f87171; }
 
     .tbl-btn {
-      padding: 4px 10px; border-radius: 6px; font-size: .72rem; font-weight: 600;
-      font-family: inherit; cursor: pointer; border: 1px solid var(--bdr);
-      background: var(--surf); color: var(--fg2); transition: all var(--ease);
-      margin-right: 4px;
+      padding:3px 9px; border-radius:5px; font-size:.7rem; font-weight:600;
+      font-family:inherit; cursor:pointer; border:1px solid var(--bdr);
+      background:var(--surf); color:var(--fg2); transition:all var(--ease); margin-right:3px;
     }
-    .tbl-btn:hover { border-color: var(--bdr-l); color: var(--fg); }
-    .tbl-btn.del:hover { border-color: rgba(239,68,68,.5); color: var(--red); }
+    .tbl-btn:hover { border-color:var(--bdr-l); color:var(--fg); }
+    .tbl-btn.del:hover { border-color:rgba(239,68,68,.5); color:var(--red); }
 
-    /* ── Quadrant legend ─────────── */
-    .q-legend {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-      padding: 12px 18px 14px; border-top: 1px solid var(--bdr);
+    /* ── Responsive ─── */
+    @media (max-width:960px) {
+      .main { grid-template-columns:1fr; }
+      .chart-inner { min-height:380px; }
+      .kpi-strip { grid-template-columns:repeat(2,1fr); }
     }
-    .q-item { display: flex; align-items: flex-start; gap: 8px; }
-    .q-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; margin-top: 3px; }
-    .q-name { font-size: .78rem; font-weight: 700; }
-    .q-desc { font-size: .68rem; color: var(--fg2); margin-top: 1px; }
-
-    /* ── Responsive ─────────────── */
-    @media (max-width: 960px) {
-      .main { grid-template-columns: 1fr; }
-      .chart-wrap { min-height: 400px; }
-      .kpi-strip { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 600px) {
-      .hdr { padding: 0 14px; }
-      .main, .table-section { padding-left: 14px; padding-right: 14px; }
-      .kpi-strip { padding: 14px 14px 0; grid-template-columns: repeat(2, 1fr); }
-      .hdr-right { display: none; }
-      .tbl th:nth-child(n+5), .tbl td:nth-child(n+5) { display: none; }
+    @media (max-width:600px) {
+      .hdr, .main, .tbl-section { padding-left:14px; padding-right:14px; }
+      .kpi-strip { padding:12px 14px 0; grid-template-columns:repeat(2,1fr); }
+      .hdr-right .chip:first-child { display:none; }
+      .tbl th:nth-child(n+5):not(:nth-last-child(-n+2)), .tbl td:nth-child(n+5):not(:nth-last-child(-n+2)) { display:none; }
     }
 
-    @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
-    .au { animation: fadeUp .36s cubic-bezier(.4,0,.2,1) both; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+    .au { animation:fadeUp .36s cubic-bezier(.4,0,.2,1) both; }
     .d1{animation-delay:.04s} .d2{animation-delay:.08s} .d3{animation-delay:.12s} .d4{animation-delay:.16s}
   </style>
 </head>
@@ -265,103 +286,113 @@
       </svg>
     </div>
     <div>
-      <div class="hdr-name">St. Mary's General Hospital</div>
-      <div class="hdr-title">Hospitalist Performance Matrix</div>
+      <div class="hdr-sub">St. Mary's General Hospital</div>
+      <div class="hdr-name">Hospitalist Performance Matrix</div>
     </div>
   </div>
   <div class="hdr-right">
     <span class="chip" id="hdr-date"></span>
-    <span class="chip green">Q1 2025</span>
+    <span class="chip g">LOS Goal ≤4.5d</span>
+    <span class="chip a">Readm. Goal ≤14%</span>
   </div>
 </header>
 
 <!-- KPI strip -->
 <div class="kpi-strip au">
-  <div class="kpi k1 au d1">
-    <div class="kpi-lbl">Total Hospitalists</div>
-    <div class="kpi-val" id="kpi-total">8</div>
-    <div class="kpi-sub">in current dataset</div>
-  </div>
-  <div class="kpi k2 au d2">
-    <div class="kpi-lbl">Avg Efficiency Score</div>
-    <div class="kpi-val" id="kpi-avg-eff">—</div>
-    <div class="kpi-sub">X-axis average</div>
-  </div>
-  <div class="kpi k3 au d3">
-    <div class="kpi-lbl">Avg Commitment Score</div>
-    <div class="kpi-val" id="kpi-avg-comm">—</div>
-    <div class="kpi-sub">Y-axis average</div>
-  </div>
-  <div class="kpi k4 au d4">
-    <div class="kpi-lbl">Champions (top-right)</div>
-    <div class="kpi-val" id="kpi-champions">—</div>
-    <div class="kpi-sub">High efficiency + commitment</div>
-  </div>
+  <div class="kpi k1"><div class="kpi-lbl">Total Hospitalists</div><div class="kpi-val" id="kpi-total">—</div><div class="kpi-sub">in dataset</div></div>
+  <div class="kpi k2"><div class="kpi-lbl">Avg Efficiency</div><div class="kpi-val" id="kpi-eff">—</div><div class="kpi-sub">X-axis average</div></div>
+  <div class="kpi k3"><div class="kpi-lbl">Avg Commitment</div><div class="kpi-val" id="kpi-comm">—</div><div class="kpi-sub">Y-axis average</div></div>
+  <div class="kpi k4"><div class="kpi-lbl">Champions</div><div class="kpi-val" id="kpi-champs">—</div><div class="kpi-sub">High E + high C</div></div>
 </div>
 
-<!-- Main: form + chart -->
+<!-- Main -->
 <div class="main">
 
-  <!-- Form panel -->
+  <!-- Left: CSV + Form -->
   <div class="panel au d2">
-    <div class="panel-head">
-      <span id="form-title">Add Hospitalist</span>
-      <span id="form-mode-hint">new entry</span>
+
+    <!-- CSV Upload -->
+    <div class="csv-section">
+      <div class="panel-head" style="padding:0 0 10px;border:none;">
+        CSV Import
+        <small>replaces or adds to data</small>
+      </div>
+      <div class="csv-drop" id="csv-drop">
+        <input type="file" accept=".csv,text/csv" id="csv-file">
+        <div class="csv-icon">📂</div>
+        <div class="csv-label">Drop CSV file here or <strong style="color:var(--accent)">browse</strong></div>
+        <div class="csv-hint">Columns: Hospitalist name, LOS, Readmission, Patient experience, Committees, GTH, MOD</div>
+      </div>
+      <div class="csv-actions">
+        <label class="csv-merge-lbl">
+          <input type="checkbox" id="csv-merge"> Add to existing data
+        </label>
+      </div>
+      <div class="csv-status" id="csv-status"></div>
+    </div>
+
+    <!-- Form -->
+    <div class="panel-head" style="border-top:1px solid var(--bdr)">
+      <span id="form-title">Add / Edit Hospitalist</span>
+      <small id="form-hint">manual entry</small>
     </div>
     <div class="panel-body">
-      <input type="hidden" id="edit-id" value="">
+      <input type="hidden" id="edit-id">
 
       <div class="form-group">
-        <label class="form-label">Full Name</label>
-        <input class="finput" type="text" id="f-name" placeholder="e.g. Dr. Jane Smith">
+        <label class="form-label">Name</label>
+        <input class="finput" type="text" id="f-name" placeholder="e.g. Dr. Smith">
       </div>
 
-      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--fg3);padding:4px 0 8px;border-top:1px solid var(--bdr);margin-top:4px;">
-        X-Axis — Efficiency Metrics
-      </div>
+      <div class="axis-label">X-Axis · Efficiency Metrics</div>
 
       <div class="finput-row">
         <div class="form-group">
-          <label class="form-label">Re-hospitalization <em>%</em></label>
-          <input class="finput" type="number" id="f-rehosp" placeholder="e.g. 5.2" min="0" max="30" step="0.1">
+          <label class="form-label">
+            Re-hospitalization %
+            <span class="goal">goal ≤14%</span>
+          </label>
+          <input class="finput" type="number" id="f-rehosp" placeholder="e.g. 14.5" min="0" max="40" step="0.1">
         </div>
         <div class="form-group">
-          <label class="form-label">Avg Length of Stay <em>days</em></label>
-          <input class="finput" type="number" id="f-los" placeholder="e.g. 4.1" min="1" max="14" step="0.1">
+          <label class="form-label">
+            Avg LOS <span style="text-transform:none;font-weight:400">(days)</span>
+            <span class="goal">goal ≤4.5d</span>
+          </label>
+          <input class="finput" type="number" id="f-los" placeholder="e.g. 4.5" min="1" max="14" step="0.1">
         </div>
       </div>
+
       <div class="form-group">
-        <label class="form-label">Patient Experience Score <em>0–100</em></label>
-        <input class="finput" type="number" id="f-patexp" placeholder="e.g. 88" min="0" max="100" step="1">
+        <label class="form-label">Patient Experience Score <span style="text-transform:none;font-weight:400">0–100</span></label>
+        <input class="finput" type="number" id="f-patexp" placeholder="e.g. 78" min="0" max="100">
       </div>
 
-      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--fg3);padding:4px 0 8px;border-top:1px solid var(--bdr);margin-top:4px;">
-        Y-Axis — System Commitment
-      </div>
+      <div class="axis-label">Y-Axis · System Commitment</div>
 
       <div class="form-group">
         <label class="form-label">Committee Involvement</label>
         <select class="finput" id="f-committee">
-          <option value="0">No committee involvement</option>
-          <option value="1">1 Committee — low score (+15)</option>
-          <option value="2">2+ Committees — medium score (+30)</option>
+          <option value="0">No committee — 0 pts</option>
+          <option value="1">1 Committee — +15 pts (low)</option>
+          <option value="2">2+ Committees — +30 pts (medium)</option>
         </select>
       </div>
 
       <div class="form-group">
         <label class="form-label">Additional Roles</label>
         <div class="toggle-row">
-          <label class="toggle-item">
+          <label class="tog-item">
             <input type="checkbox" id="f-gth">
             <div class="tog"></div>
-            <span class="toggle-lbl">GTH Role</span>
-            <span class="toggle-badge" id="badge-gth">+0</span>
+            <span class="tog-lbl">GTH</span>
+            <span class="tog-pts" id="pts-gth">+0</span>
           </label>
-          <label class="toggle-item">
+          <label class="tog-item">
             <input type="checkbox" id="f-mod">
             <div class="tog"></div>
-            <span class="toggle-lbl">MOD Role</span>
-            <span class="toggle-badge" id="badge-mod">+0</span>
+            <span class="tog-lbl">MOD</span>
+            <span class="tog-pts" id="pts-mod">+0</span>
           </label>
         </div>
       </div>
@@ -369,87 +400,74 @@
       <!-- Live score preview -->
       <div class="score-preview">
         <div class="sp-box">
-          <div class="sp-lbl">Efficiency Score</div>
+          <div class="sp-lbl">Efficiency</div>
           <div class="sp-val" id="prev-eff" style="color:var(--accent)">—</div>
-          <div class="sp-axis">X-axis position</div>
+          <div class="sp-axis">X position</div>
         </div>
         <div class="sp-box">
-          <div class="sp-lbl">Commitment Score</div>
+          <div class="sp-lbl">Commitment</div>
           <div class="sp-val" id="prev-comm" style="color:var(--purple)">—</div>
-          <div class="sp-axis">Y-axis position</div>
+          <div class="sp-axis">Y position</div>
         </div>
-        <div class="sp-quad" id="prev-quad">Fill in all fields to preview</div>
+        <div class="sp-quad" id="prev-quad">Complete efficiency fields to preview</div>
       </div>
 
       <div class="btn-row">
-        <button class="btn btn-primary" onclick="submitForm()" id="btn-submit">Add to Matrix</button>
-        <button class="btn btn-ghost"   onclick="clearForm()">Clear</button>
+        <button class="btn btn-primary" id="btn-submit" onclick="submitForm()">Add to Matrix</button>
+        <button class="btn btn-ghost" onclick="clearForm()">Clear</button>
       </div>
 
-      <!-- Scoring methodology -->
-      <button class="method-toggle" id="meth-btn" onclick="toggleMethod()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <!-- Methodology -->
+      <button class="meth-btn" id="meth-btn" onclick="toggleMeth()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         How scores are calculated
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto"><polyline points="6 9 12 15 18 9"/></svg>
+        <svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
-      <div class="method-body" id="meth-body">
-        <div class="method-section">X-axis — Efficiency (weighted avg)</div>
-        <div class="method-row"><span>Re-hospitalization rate</span><span style="color:var(--fg)">40% weight</span></div>
-        <div class="method-row"><span>  ≤3% → 100 · 8% → 58 · ≥15% → 0</span><span></span></div>
-        <div class="method-row"><span>Avg length of stay</span><span style="color:var(--fg)">30% weight</span></div>
-        <div class="method-row"><span>  ≤3d → 100 · 5d → 50 · ≥7d → 0</span><span></span></div>
-        <div class="method-row"><span>Patient experience score</span><span style="color:var(--fg)">30% weight</span></div>
-        <div class="method-row"><span>  Entered directly (0–100)</span><span></span></div>
-
-        <div class="method-section">Y-axis — Commitment (additive)</div>
-        <div class="method-row"><span>No committee</span><span style="color:var(--fg)">0 pts</span></div>
-        <div class="method-row"><span>1 committee</span><span style="color:var(--fg)">+15 pts</span></div>
-        <div class="method-row"><span>2+ committees</span><span style="color:var(--fg)">+30 pts</span></div>
-        <div class="method-row"><span>GTH role</span><span style="color:var(--fg)">+30 pts</span></div>
-        <div class="method-row"><span>MOD role</span><span style="color:var(--fg)">+40 pts</span></div>
-        <div class="method-row" style="font-weight:700"><span>Maximum possible</span><span style="color:var(--fg)">100 pts</span></div>
+      <div class="meth-body" id="meth-body">
+        <div class="meth-sec">X-axis — Efficiency (weighted average, 0–100)</div>
+        <div class="meth-row"><span>Re-hospitalization rate</span><span style="color:var(--fg)">40%</span></div>
+        <div class="meth-row"><span style="color:var(--fg3)">  <span class="goal">Goal ≤14%</span> · ≤10%→100 · 14%→80 · 18%→40 · ≥22%→0</span></div>
+        <div class="meth-row"><span>Avg length of stay</span><span style="color:var(--fg)">30%</span></div>
+        <div class="meth-row"><span style="color:var(--fg3)">  <span class="goal">Goal ≤4.5d</span> · ≤3.5d→100 · 4.5d→78 · 6d→44 · ≥8d→0</span></div>
+        <div class="meth-row"><span>Patient experience score</span><span style="color:var(--fg)">30%</span></div>
+        <div class="meth-row"><span style="color:var(--fg3)">  Entered directly (0–100)</span></div>
+        <div class="meth-sec">Y-axis — Commitment (additive, 0–100)</div>
+        <div class="meth-row"><span>No committee</span><span>0 pts</span></div>
+        <div class="meth-row"><span>1 committee</span><span>+15 pts</span></div>
+        <div class="meth-row"><span>2+ committees</span><span>+30 pts</span></div>
+        <div class="meth-row"><span>GTH role</span><span>+30 pts</span></div>
+        <div class="meth-row"><span>MOD role</span><span>+40 pts</span></div>
+        <div class="meth-row" style="font-weight:700"><span>Maximum</span><span style="color:var(--fg)">100 pts</span></div>
       </div>
     </div>
 
     <!-- Quadrant legend -->
     <div class="q-legend">
-      <div class="q-item">
-        <div class="q-dot" style="background:rgba(16,185,129,.6)"></div>
-        <div><div class="q-name" style="color:var(--green)">Champions</div><div class="q-desc">High efficiency + high commitment</div></div>
-      </div>
-      <div class="q-item">
-        <div class="q-dot" style="background:rgba(14,165,233,.6)"></div>
-        <div><div class="q-name" style="color:var(--accent)">Committed Improvers</div><div class="q-desc">Engaged but efficiency needs work</div></div>
-      </div>
-      <div class="q-item">
-        <div class="q-dot" style="background:rgba(245,158,11,.6)"></div>
-        <div><div class="q-name" style="color:var(--amber)">Solo Performers</div><div class="q-desc">Efficient but less system-engaged</div></div>
-      </div>
-      <div class="q-item">
-        <div class="q-dot" style="background:rgba(239,68,68,.6)"></div>
-        <div><div class="q-name" style="color:var(--red)">Development Priority</div><div class="q-desc">Needs coaching on both dimensions</div></div>
-      </div>
+      <div class="q-item"><div class="q-dot" style="background:rgba(16,185,129,.7)"></div><div><div class="q-name" style="color:var(--green)">Champions</div><div class="q-desc">High efficiency + high commitment</div></div></div>
+      <div class="q-item"><div class="q-dot" style="background:rgba(14,165,233,.7)"></div><div><div class="q-name" style="color:var(--accent)">Committed Improvers</div><div class="q-desc">Engaged but efficiency needs work</div></div></div>
+      <div class="q-item"><div class="q-dot" style="background:rgba(245,158,11,.7)"></div><div><div class="q-name" style="color:var(--amber)">Solo Performers</div><div class="q-desc">Efficient but less system-engaged</div></div></div>
+      <div class="q-item"><div class="q-dot" style="background:rgba(239,68,68,.7)"></div><div><div class="q-name" style="color:var(--red)">Development Priority</div><div class="q-desc">Needs coaching on both dimensions</div></div></div>
     </div>
   </div>
 
-  <!-- Chart panel -->
-  <div class="panel au d3" style="display:flex;flex-direction:column;">
+  <!-- Right: Chart -->
+  <div class="chart-panel au d3">
     <div class="panel-head">
       Performance Matrix
-      <span>Efficiency (X) · Commitment (Y)</span>
+      <small>Efficiency (X-axis) · Commitment to System (Y-axis)</small>
     </div>
-    <div style="flex:1;padding:16px;min-height:480px;position:relative;">
+    <div class="chart-inner">
       <canvas id="matrix-chart"></canvas>
     </div>
   </div>
 </div>
 
-<!-- Data table -->
-<div class="table-section au d4">
+<!-- Table -->
+<div class="tbl-section au d4">
   <div class="tbl-wrap">
     <div class="tbl-head">
       <div class="tbl-title">All Hospitalists</div>
-      <span id="tbl-count" style="font-size:.75rem;color:var(--fg2)"></span>
+      <span id="tbl-count" style="font-size:.73rem;color:var(--fg2)"></span>
     </div>
     <div style="overflow-x:auto">
       <table class="tbl">
@@ -475,165 +493,274 @@
 </div>
 
 <script>
-// ═══════════════════════════════════════════
-//  DATA
-// ═══════════════════════════════════════════
-let uid = 9;
+// ═══════════════════════════════════════
+//  INITIAL DATA (from hospitalist_data.csv)
+// ═══════════════════════════════════════
+let uid = 100;
 let hospitalists = [
-  {id:1, name:'Dr. Sarah Chen',     rehosp:4.2, los:3.8, patexp:92, committee:2, gth:true,  mod:true },
-  {id:2, name:'Dr. James Wilson',   rehosp:6.8, los:4.5, patexp:85, committee:1, gth:false, mod:true },
-  {id:3, name:'Dr. Priya Sharma',   rehosp:5.1, los:4.1, patexp:90, committee:2, gth:true,  mod:false},
-  {id:4, name:'Dr. Michael Torres', rehosp:3.2, los:3.2, patexp:96, committee:0, gth:true,  mod:false},
-  {id:5, name:'Dr. Emma Roberts',   rehosp:7.4, los:5.2, patexp:82, committee:1, gth:false, mod:false},
-  {id:6, name:'Dr. David Kim',      rehosp:8.1, los:5.5, patexp:78, committee:2, gth:false, mod:true },
-  {id:7, name:'Dr. Lisa Anderson',  rehosp:4.9, los:4.0, patexp:91, committee:1, gth:true,  mod:true },
-  {id:8, name:'Dr. Robert Patel',   rehosp:9.5, los:6.1, patexp:74, committee:0, gth:false, mod:false},
+  {id:uid++,name:'Dol', rehosp:16.7,los:6.5,patexp:79, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Dou', rehosp:19.6,los:4.4,patexp:66, committee:1,gth:true, mod:true },
+  {id:uid++,name:'Esc', rehosp:19.9,los:6.7,patexp:76, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Ha',  rehosp:16.7,los:5.1,patexp:80, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Ji',  rehosp:15.8,los:6.3,patexp:77, committee:1,gth:true, mod:true },
+  {id:uid++,name:'Kam', rehosp:18.4,los:5.3,patexp:75, committee:0,gth:true, mod:false},
+  {id:uid++,name:'Kw',  rehosp:16.1,los:5.9,patexp:69, committee:0,gth:true, mod:false},
+  {id:uid++,name:'Qu',  rehosp:17.2,los:3.9,patexp:62, committee:0,gth:true, mod:false},
+  {id:uid++,name:'Vie', rehosp:15.1,los:6.9,patexp:70, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Wo',  rehosp:14.2,los:4.8,patexp:79, committee:1,gth:true, mod:true },
+  {id:uid++,name:'Yan', rehosp:21.1,los:5.3,patexp:100,committee:0,gth:false,mod:false},
+  {id:uid++,name:'Zam', rehosp:15.2,los:4.6,patexp:48, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Ze',  rehosp:19.4,los:4.6,patexp:67, committee:1,gth:true, mod:true },
+  {id:uid++,name:'Zin', rehosp:20.1,los:5.6,patexp:72, committee:1,gth:false,mod:false},
+  {id:uid++,name:'N.M', rehosp:14.7,los:5.4,patexp:73, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Af',  rehosp:18.8,los:3.3,patexp:72, committee:1,gth:true, mod:true },
+  {id:uid++,name:'Zou', rehosp:14.9,los:3.9,patexp:73, committee:0,gth:true, mod:false},
+  {id:uid++,name:'Ch',  rehosp:15.2,los:5.0,patexp:62, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Shz', rehosp:16.2,los:5.6,patexp:66, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Hi',  rehosp:16.8,los:4.4,patexp:76, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Jaf', rehosp:18.1,los:6.0,patexp:78, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Chu', rehosp:17.2,los:4.6,patexp:71, committee:1,gth:true, mod:true },
+  {id:uid++,name:'Dhr', rehosp:20.5,los:5.7,patexp:68, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Rai', rehosp:14.9,los:4.0,patexp:73, committee:0,gth:false,mod:false},
+  {id:uid++,name:'As',  rehosp:17.9,los:5.9,patexp:57, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Us',  rehosp:17.1,los:5.2,patexp:82, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Hu',  rehosp:14.0,los:4.5,patexp:64, committee:1,gth:false,mod:false},
+  {id:uid++,name:'Ib',  rehosp:14.4,los:5.8,patexp:80, committee:0,gth:false,mod:false},
+  {id:uid++,name:'If',  rehosp:15.7,los:5.4,patexp:92, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Rb',  rehosp:15.0,los:5.6,patexp:60, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Ai',  rehosp:18.5,los:5.1,patexp:76, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Sz',  rehosp:13.4,los:5.3,patexp:77, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Fi',  rehosp:17.5,los:4.9,patexp:54, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Ca',  rehosp:17.1,los:4.7,patexp:62, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Oo',  rehosp:18.8,los:6.8,patexp:71, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Sk',  rehosp:17.0,los:6.1,patexp:74, committee:0,gth:false,mod:false},
+  {id:uid++,name:'Naj', rehosp:18.0,los:5.9,patexp:72, committee:0,gth:false,mod:false},
 ];
 
-const PALETTE = ['#0ea5e9','#10b981','#a855f7','#f59e0b','#f43f5e','#14b8a6','#6366f1','#84cc16','#ec4899','#fb923c'];
-
-// ═══════════════════════════════════════════
-//  SCORING
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
+//  SCORING  (recalibrated to real data)
+//
+//  Re-hosp: goal = 14%, real range 13–21%
+//    formula: (22 - rate) / 10 * 100  →  14% ≈ 80pts, 22%+ → 0
+//
+//  LOS: goal = 4.5d, real range 3.3–6.9d
+//    formula: (8 - los) / 4.5 * 100   →  4.5d ≈ 78pts, 8d+ → 0
+// ═══════════════════════════════════════
 function effScore(h) {
-  const rS = Math.max(0, Math.min(100, (15 - h.rehosp) / 12 * 100));
-  const lS = Math.max(0, Math.min(100, (7  - h.los)    / 4  * 100));
+  const rS = Math.max(0, Math.min(100, (22 - h.rehosp) / 10 * 100));
+  const lS = Math.max(0, Math.min(100, (8  - h.los)    / 4.5 * 100));
   const pS = Math.max(0, Math.min(100, h.patexp));
   return Math.round(0.4 * rS + 0.3 * lS + 0.3 * pS);
 }
 
 function commScore(h) {
-  let pts = 0;
-  if (h.committee >= 2) pts += 30;
-  else if (h.committee === 1) pts += 15;
-  if (h.gth) pts += 30;
-  if (h.mod) pts += 40;
-  return Math.min(100, pts);
+  let p = 0;
+  if (h.committee >= 2) p += 30;
+  else if (h.committee === 1) p += 15;
+  if (h.gth) p += 30;
+  if (h.mod) p += 40;
+  return Math.min(100, p);
 }
 
-function quadrant(eff, comm) {
-  if (eff >= 50 && comm >= 50) return { label:'Champions',          cls:'b-green', color:'rgba(16,185,129,.7)' };
-  if (eff <  50 && comm >= 50) return { label:'Committed Improvers', cls:'b-blue',  color:'rgba(14,165,233,.7)' };
-  if (eff >= 50 && comm <  50) return { label:'Solo Performers',     cls:'b-amber', color:'rgba(245,158,11,.7)' };
-  return                               { label:'Development Priority',cls:'b-red',   color:'rgba(239,68,68,.7)'  };
+function quadrant(e, c) {
+  if (e >= 50 && c >= 50) return {label:'Champions',          cls:'b-green', qcolor:'rgba(16,185,129,.7)'};
+  if (e <  50 && c >= 50) return {label:'Committed Improvers', cls:'b-blue',  qcolor:'rgba(14,165,233,.7)'};
+  if (e >= 50 && c <  50) return {label:'Solo Performers',     cls:'b-amber', qcolor:'rgba(245,158,11,.7)'};
+  return                          {label:'Development Priority',cls:'b-red',   qcolor:'rgba(239,68,68,.7)' };
 }
 
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
+//  CSV PARSING
+// ═══════════════════════════════════════
+function parseCSV(text) {
+  const lines = text.trim().split(/\r?\n/).filter(l => l.trim());
+  if (lines.length < 2) return [];
+
+  const raw    = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/\s+/g,' ').replace(/['"]/g,''));
+  const col    = (...names) => { for (const n of names) { const i = raw.indexOf(n); if (i >= 0) return i; } return -1; };
+  const iName  = col('hospitalist name','name','hospitalist');
+  const iLos   = col('los','length of stay','avg los');
+  const iReadm = col('readmission','rehosp','readmission rate','re-hospitalization','rehospitalization');
+  const iPat   = col('patient experience','patient experience score','patexp','patient exp','experience');
+  const iComm  = col('committees','committee');
+  const iGth   = col('gth');
+  const iMod   = col('mod');
+
+  if (iName < 0 || iReadm < 0 || iLos < 0) return null; // unrecognised format
+
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    const c = lines[i].split(',').map(v => v.trim().replace(/['"]/g,''));
+    const name = iName >= 0 ? c[iName] : '';
+    if (!name) continue;
+    rows.push({
+      id:        uid++,
+      name,
+      rehosp:    parseFloat(c[iReadm]) || 0,
+      los:       parseFloat(c[iLos])   || 0,
+      patexp:    parseFloat(c[iPat])   || 0,
+      committee: parseInt(c[iComm])    || 0,
+      gth:       parseInt(c[iGth])     === 1,
+      mod:       parseInt(c[iMod])     === 1,
+    });
+  }
+  return rows;
+}
+
+// ─── CSV Upload UI ───────────────────────
+const csvDrop = document.getElementById('csv-drop');
+const csvFile = document.getElementById('csv-file');
+const csvStatus = document.getElementById('csv-status');
+
+csvDrop.addEventListener('dragover', e => { e.preventDefault(); csvDrop.classList.add('over'); });
+csvDrop.addEventListener('dragleave', () => csvDrop.classList.remove('over'));
+csvDrop.addEventListener('drop', e => {
+  e.preventDefault(); csvDrop.classList.remove('over');
+  if (e.dataTransfer.files[0]) handleCSVFile(e.dataTransfer.files[0]);
+});
+csvFile.addEventListener('change', () => {
+  if (csvFile.files[0]) handleCSVFile(csvFile.files[0]);
+  csvFile.value = '';
+});
+
+function handleCSVFile(file) {
+  if (!file.name.endsWith('.csv') && file.type !== 'text/csv') {
+    csvStatus.style.color = 'var(--red)';
+    csvStatus.textContent = '✗ Please upload a .csv file';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const data = parseCSV(e.target.result);
+    if (data === null) {
+      csvStatus.style.color = 'var(--red)';
+      csvStatus.textContent = '✗ Could not recognise columns. Need: Hospitalist name, LOS, Readmission, Patient experience, Committees, GTH, MOD';
+      return;
+    }
+    if (data.length === 0) {
+      csvStatus.style.color = 'var(--amber)';
+      csvStatus.textContent = '⚠ No data rows found in file';
+      return;
+    }
+    const merge = document.getElementById('csv-merge').checked;
+    if (merge) {
+      hospitalists = [...hospitalists, ...data];
+    } else {
+      hospitalists = data;
+    }
+    refresh();
+    csvStatus.style.color = 'var(--green)';
+    csvStatus.textContent = `✓ ${merge ? 'Added' : 'Loaded'} ${data.length} hospitalists from ${file.name}`;
+  };
+  reader.readAsText(file);
+}
+
+// ═══════════════════════════════════════
 //  CHART
-// ═══════════════════════════════════════════
-const quadrantPlugin = {
-  id: 'quadrants',
+// ═══════════════════════════════════════
+const PALETTE = ['#0ea5e9','#10b981','#a855f7','#f59e0b','#f43f5e','#14b8a6','#6366f1','#84cc16',
+                 '#ec4899','#fb923c','#38bdf8','#34d399','#c084fc','#fbbf24','#fb7185','#2dd4bf',
+                 '#818cf8','#a3e635','#f472b6','#fdba74','#22d3ee','#4ade80','#e879f9','#facc15'];
+
+const quadPlugin = {
+  id: 'quadPlugin',
   beforeDraw(chart) {
-    const { ctx, chartArea: { left, top, right, bottom }, scales: { x, y } } = chart;
+    const {ctx, chartArea:{left,top,right,bottom}, scales:{x,y}} = chart;
     if (!x || !y) return;
-    const mx = x.getPixelForValue(50);
-    const my = y.getPixelForValue(50);
+    const mx = x.getPixelForValue(50), my = y.getPixelForValue(50);
     ctx.save();
 
-    // Quadrant fills
-    const fills = [
-      { x: mx,   y: top,  w: right-mx,  h: my-top,    c: 'rgba(16,185,129,.06)'  },
-      { x: left, y: top,  w: mx-left,   h: my-top,    c: 'rgba(14,165,233,.06)'  },
-      { x: left, y: my,   w: mx-left,   h: bottom-my, c: 'rgba(239,68,68,.06)'   },
-      { x: mx,   y: my,   w: right-mx,  h: bottom-my, c: 'rgba(245,158,11,.06)'  },
-    ];
-    fills.forEach(f => { ctx.fillStyle = f.c; ctx.fillRect(f.x, f.y, f.w, f.h); });
+    // Fills
+    [[mx,top,right-mx,my-top,'rgba(16,185,129,.07)'],
+     [left,top,mx-left,my-top,'rgba(14,165,233,.07)'],
+     [left,my,mx-left,bottom-my,'rgba(239,68,68,.07)'],
+     [mx,my,right-mx,bottom-my,'rgba(245,158,11,.07)']
+    ].forEach(([x,y,w,h,c]) => { ctx.fillStyle=c; ctx.fillRect(x,y,w,h); });
 
-    // Mid lines
-    ctx.strokeStyle = 'rgba(139,163,196,.18)';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([5, 5]);
-    ctx.beginPath(); ctx.moveTo(mx, top);  ctx.lineTo(mx, bottom); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(left, my); ctx.lineTo(right, my);  ctx.stroke();
+    // Midlines
+    ctx.strokeStyle = 'rgba(139,163,196,.15)';
+    ctx.lineWidth = 1; ctx.setLineDash([5,5]);
+    ctx.beginPath(); ctx.moveTo(mx,top);   ctx.lineTo(mx,bottom); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(left,my);  ctx.lineTo(right,my);  ctx.stroke();
     ctx.setLineDash([]);
 
     // Quadrant labels
-    ctx.font = 'bold 9px Outfit, sans-serif';
-    const labels = [
-      { t: 'CHAMPIONS',           c: 'rgba(16,185,129,.35)',  tx: mx+9,   ty: top+16  },
-      { t: 'COMMITTED IMPROVERS', c: 'rgba(14,165,233,.35)',  tx: left+9, ty: top+16  },
-      { t: 'DEVELOPMENT PRIORITY',c: 'rgba(239,68,68,.35)',   tx: left+9, ty: bottom-9},
-      { t: 'SOLO PERFORMERS',     c: 'rgba(245,158,11,.35)',  tx: mx+9,   ty: bottom-9},
-    ];
-    labels.forEach(l => { ctx.fillStyle = l.c; ctx.fillText(l.t, l.tx, l.ty); });
+    ctx.font = 'bold 9px Outfit,sans-serif';
+    [['CHAMPIONS',           'rgba(16,185,129,.3)', mx+8, top+14],
+     ['COMMITTED IMPROVERS', 'rgba(14,165,233,.3)', left+8, top+14],
+     ['DEVELOPMENT PRIORITY','rgba(239,68,68,.3)',  left+8, bottom-8],
+     ['SOLO PERFORMERS',     'rgba(245,158,11,.3)', mx+8,  bottom-8],
+    ].forEach(([t,c,tx,ty]) => { ctx.fillStyle=c; ctx.fillText(t,tx,ty); });
 
     ctx.restore();
   },
   afterDraw(chart) {
-    // Draw name labels next to each point
-    const { ctx, scales: { x, y } } = chart;
+    const {ctx, scales:{x,y}} = chart;
     if (!x || !y) return;
     ctx.save();
-    ctx.font = '11px Outfit, sans-serif';
-    ctx.fillStyle = 'rgba(220,232,255,.6)';
+    ctx.font = '11px Outfit,sans-serif';
+    ctx.fillStyle = 'rgba(220,232,255,.65)';
     chart.data.datasets.forEach(ds => {
       ds.data.forEach(pt => {
-        const px = x.getPixelForValue(pt.x);
-        const py = y.getPixelForValue(pt.y);
-        ctx.fillText(pt.label, px + 10, py + 4);
+        const px = x.getPixelForValue(pt.x), py = y.getPixelForValue(pt.y);
+        ctx.fillText(pt._name, px + 9, py + 4);
       });
     });
     ctx.restore();
   }
 };
+Chart.register(quadPlugin);
 
-Chart.register(quadrantPlugin);
-
-// Global chart defaults
-Chart.defaults.color           = '#8aa3c4';
-Chart.defaults.borderColor     = '#192840';
-Chart.defaults.font.family     = "'Outfit', sans-serif";
-Chart.defaults.font.size       = 12;
+Chart.defaults.color                          = '#8aa3c4';
+Chart.defaults.borderColor                    = '#192840';
+Chart.defaults.font.family                    = "'Outfit', sans-serif";
 Chart.defaults.plugins.tooltip.backgroundColor = '#0b1120';
 Chart.defaults.plugins.tooltip.borderColor     = '#192840';
 Chart.defaults.plugins.tooltip.borderWidth     = 1;
 Chart.defaults.plugins.tooltip.padding         = 12;
 Chart.defaults.plugins.tooltip.titleColor      = '#dce8ff';
 Chart.defaults.plugins.tooltip.bodyColor       = '#8aa3c4';
-Chart.defaults.plugins.tooltip.titleFont       = { weight: '700', size: 13 };
+Chart.defaults.plugins.tooltip.titleFont       = {weight:'700', size:13};
 
-let matrixChart = null;
+let chart = null;
 
-function buildChartData() {
-  return hospitalists.map((h, i) => ({
-    label:  h.name.replace('Dr. ', ''),
-    data:   [{ x: effScore(h), y: commScore(h), label: h.name.replace('Dr. ', '').split(' ').pop() }],
-    backgroundColor: PALETTE[i % PALETTE.length] + 'cc',
-    borderColor:     PALETTE[i % PALETTE.length],
-    borderWidth: 2,
-    pointRadius: 10,
-    pointHoverRadius: 14,
-    pointStyle: 'circle',
-  }));
+function buildDatasets() {
+  return hospitalists.map((h, i) => {
+    const e = effScore(h), c = commScore(h);
+    return {
+      label: h.name,
+      data: [{ x: e, y: c, _name: h.name }],
+      backgroundColor: PALETTE[i % PALETTE.length] + 'bb',
+      borderColor:     PALETTE[i % PALETTE.length],
+      borderWidth: 2,
+      pointRadius: 9,
+      pointHoverRadius: 13,
+    };
+  });
 }
 
 function initChart() {
   const ctx = document.getElementById('matrix-chart').getContext('2d');
-  matrixChart = new Chart(ctx, {
+  chart = new Chart(ctx, {
     type: 'scatter',
-    data: { datasets: buildChartData() },
+    data: { datasets: buildDatasets() },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false,
       plugins: {
         legend: {
           position: 'right',
-          labels: { usePointStyle: true, pointStyleWidth: 8, font: { size: 11 }, padding: 12 }
+          labels: { usePointStyle:true, pointStyleWidth:8, font:{size:10}, padding:10, boxHeight:8 }
         },
         tooltip: {
           callbacks: {
-            title: (items) => {
-              const ds = matrixChart.data.datasets[items[0].datasetIndex];
-              return ds.label;
-            },
-            label: (item) => {
-              const h = hospitalists[item.datasetIndex];
-              const eff  = effScore(h);
-              const comm = commScore(h);
-              const q    = quadrant(eff, comm);
+            title: items => chart.data.datasets[items[0].datasetIndex].label,
+            label: item => {
+              const h   = hospitalists[item.datasetIndex];
+              const eff = effScore(h), comm = commScore(h);
+              const q   = quadrant(eff, comm);
               return [
-                ` Efficiency:  ${eff}  (Re-hosp: ${h.rehosp}% · LOS: ${h.los}d · Exp: ${h.patexp})`,
-                ` Commitment: ${comm}  (Committee: ${['None','1','2+'][h.committee]} · GTH: ${h.gth?'✓':'✗'} · MOD: ${h.mod?'✓':'✗'})`,
+                ` Efficiency:  ${eff}  (Readm: ${h.rehosp}% · LOS: ${h.los}d · Exp: ${h.patexp})`,
+                ` Commitment: ${comm}  (Comm: ${['None','1','2+'][Math.min(h.committee,2)]} · GTH:${h.gth?'✓':'✗'} · MOD:${h.mod?'✓':'✗'})`,
                 ` Quadrant: ${q.label}`,
               ];
             }
@@ -643,15 +770,13 @@ function initChart() {
       scales: {
         x: {
           min: 0, max: 100,
-          title: { display: true, text: 'Efficiency Score  →', color: '#8aa3c4', font: { size: 12, weight: '600' } },
-          grid:  { color: '#192840' },
-          ticks: { stepSize: 10 },
+          title: { display:true, text:'Efficiency Score  →', color:'#8aa3c4', font:{size:12,weight:'600'} },
+          grid: { color:'#192840' }, ticks: { stepSize:10 },
         },
         y: {
           min: 0, max: 100,
-          title: { display: true, text: '↑  Commitment Score', color: '#8aa3c4', font: { size: 12, weight: '600' } },
-          grid:  { color: '#192840' },
-          ticks: { stepSize: 10 },
+          title: { display:true, text:'↑  Commitment Score', color:'#8aa3c4', font:{size:12,weight:'600'} },
+          grid: { color:'#192840' }, ticks: { stepSize:10 },
         }
       }
     }
@@ -659,40 +784,33 @@ function initChart() {
 }
 
 function refreshChart() {
-  if (!matrixChart) return;
-  matrixChart.data.datasets = buildChartData();
-  matrixChart.update();
+  if (!chart) return;
+  chart.data.datasets = buildDatasets();
+  chart.update();
 }
 
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
 //  TABLE
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
 function renderTable() {
   const body = document.getElementById('tbl-body');
   body.innerHTML = hospitalists.map((h, i) => {
-    const eff  = effScore(h);
-    const comm = commScore(h);
-    const q    = quadrant(eff, comm);
+    const eff = effScore(h), comm = commScore(h), q = quadrant(eff, comm);
     const color = PALETTE[i % PALETTE.length];
-
-    function barHtml(val) {
-      const c = val >= 70 ? '#10b981' : val >= 45 ? '#f59e0b' : '#ef4444';
-      return `<div class="bar-w">
-        <div class="bar-t"><div class="bar-f" style="width:${val}%;background:${c}"></div></div>
-        <span class="bar-n">${val}</span>
-      </div>`;
-    }
-
+    const bar = (v) => {
+      const c = v>=65?'#10b981':v>=40?'#f59e0b':'#ef4444';
+      return `<div class="bar-w"><div class="bar-t"><div class="bar-f" style="width:${v}%;background:${c}"></div></div><span class="bar-n">${v}</span></div>`;
+    };
     return `<tr>
       <td><span class="dot" style="background:${color}"></span>${h.name}</td>
       <td style="font-family:'JetBrains Mono',monospace">${h.rehosp}%</td>
       <td style="font-family:'JetBrains Mono',monospace">${h.los}d</td>
       <td style="font-family:'JetBrains Mono',monospace">${h.patexp}</td>
-      <td>${['None','1 committee','2+ committees'][h.committee]}</td>
-      <td>${h.gth ? '<span class="badge b-green">Yes</span>' : '<span style="color:var(--fg3);font-size:.8rem">—</span>'}</td>
-      <td>${h.mod ? '<span class="badge b-green">Yes</span>' : '<span style="color:var(--fg3);font-size:.8rem">—</span>'}</td>
-      <td>${barHtml(eff)}</td>
-      <td>${barHtml(comm)}</td>
+      <td>${['None','1 committee','2+ committees'][Math.min(h.committee,2)]}</td>
+      <td>${h.gth?'<span class="badge b-green">Yes</span>':'<span style="color:var(--fg3)">—</span>'}</td>
+      <td>${h.mod?'<span class="badge b-green">Yes</span>':'<span style="color:var(--fg3)">—</span>'}</td>
+      <td>${bar(eff)}</td>
+      <td>${bar(comm)}</td>
       <td><span class="badge ${q.cls}">${q.label}</span></td>
       <td>
         <button class="tbl-btn" onclick="editRow(${h.id})">Edit</button>
@@ -700,162 +818,137 @@ function renderTable() {
       </td>
     </tr>`;
   }).join('');
-  document.getElementById('tbl-count').textContent = `${hospitalists.length} hospitalist${hospitalists.length !== 1 ? 's' : ''}`;
+  document.getElementById('tbl-count').textContent = `${hospitalists.length} hospitalist${hospitalists.length!==1?'s':''}`;
 }
 
-// ═══════════════════════════════════════════
-//  KPI STRIP
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
+//  KPIs
+// ═══════════════════════════════════════
 function refreshKPIs() {
   const n = hospitalists.length;
   document.getElementById('kpi-total').textContent = n;
-  if (n === 0) {
-    ['kpi-avg-eff','kpi-avg-comm','kpi-champions'].forEach(id => document.getElementById(id).textContent = '—');
-    return;
-  }
+  if (n === 0) { ['kpi-eff','kpi-comm','kpi-champs'].forEach(id=>document.getElementById(id).textContent='—'); return; }
   const effs  = hospitalists.map(effScore);
   const comms = hospitalists.map(commScore);
-  const avgEff  = Math.round(effs.reduce((a,b)=>a+b,0) / n);
-  const avgComm = Math.round(comms.reduce((a,b)=>a+b,0) / n);
-  const champs  = hospitalists.filter((h,i) => effs[i] >= 50 && comms[i] >= 50).length;
-  document.getElementById('kpi-avg-eff').textContent  = avgEff;
-  document.getElementById('kpi-avg-comm').textContent = avgComm;
-  document.getElementById('kpi-champions').textContent = champs;
+  document.getElementById('kpi-eff').textContent   = Math.round(effs.reduce((a,b)=>a+b,0)/n);
+  document.getElementById('kpi-comm').textContent  = Math.round(comms.reduce((a,b)=>a+b,0)/n);
+  document.getElementById('kpi-champs').textContent = hospitalists.filter((_,i)=>effs[i]>=50&&comms[i]>=50).length;
 }
 
-// ═══════════════════════════════════════════
-//  FORM LOGIC
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
+//  FORM
+// ═══════════════════════════════════════
 function calcPreview() {
-  const rehosp    = parseFloat(document.getElementById('f-rehosp').value);
-  const los       = parseFloat(document.getElementById('f-los').value);
-  const patexp    = parseFloat(document.getElementById('f-patexp').value);
-  const committee = parseInt(document.getElementById('f-committee').value);
-  const gth       = document.getElementById('f-gth').checked;
-  const mod       = document.getElementById('f-mod').checked;
+  const r = parseFloat(document.getElementById('f-rehosp').value);
+  const l = parseFloat(document.getElementById('f-los').value);
+  const p = parseFloat(document.getElementById('f-patexp').value);
+  const c = parseInt(document.getElementById('f-committee').value);
+  const g = document.getElementById('f-gth').checked;
+  const m = document.getElementById('f-mod').checked;
 
-  // Update badge labels
-  document.getElementById('badge-gth').textContent = gth ? '+30' : '+0';
-  document.getElementById('badge-mod').textContent = mod ? '+40' : '+0';
+  document.getElementById('pts-gth').textContent = g ? '+30' : '+0';
+  document.getElementById('pts-mod').textContent = m ? '+40' : '+0';
 
-  if (isNaN(rehosp) || isNaN(los) || isNaN(patexp)) {
+  if (isNaN(r) || isNaN(l) || isNaN(p)) {
     document.getElementById('prev-eff').textContent  = '—';
     document.getElementById('prev-comm').textContent = '—';
-    document.getElementById('prev-quad').textContent = 'Fill in all efficiency fields to preview';
+    document.getElementById('prev-quad').innerHTML   = '<span style="color:var(--fg3)">Complete efficiency fields to preview</span>';
     return;
   }
-
-  const h = { rehosp, los, patexp, committee, gth, mod };
-  const eff  = effScore(h);
-  const comm = commScore(h);
-  const q    = quadrant(eff, comm);
-
+  const h   = {rehosp:r,los:l,patexp:p,committee:c,gth:g,mod:m};
+  const eff = effScore(h), comm = commScore(h), q = quadrant(eff,comm);
   document.getElementById('prev-eff').textContent  = eff;
   document.getElementById('prev-comm').textContent = comm;
-  document.getElementById('prev-quad').innerHTML   = `<span style="color:${q.color.replace('.7','1').replace('rgba','rgba').replace(',0.', ',0.9')}">${q.label}</span>`;
+  document.getElementById('prev-quad').innerHTML   = `<span style="color:${q.qcolor.replace('.7','1')}">${q.label}</span>`;
 }
 
-['f-rehosp','f-los','f-patexp','f-committee'].forEach(id => {
-  document.getElementById(id).addEventListener('input', calcPreview);
-});
-['f-gth','f-mod'].forEach(id => {
-  document.getElementById(id).addEventListener('change', calcPreview);
-});
+['f-rehosp','f-los','f-patexp','f-committee'].forEach(id => document.getElementById(id).addEventListener('input', calcPreview));
+['f-gth','f-mod'].forEach(id => document.getElementById(id).addEventListener('change', calcPreview));
 
 function submitForm() {
-  const name      = document.getElementById('f-name').value.trim();
-  const rehosp    = parseFloat(document.getElementById('f-rehosp').value);
-  const los       = parseFloat(document.getElementById('f-los').value);
-  const patexp    = parseFloat(document.getElementById('f-patexp').value);
-  const committee = parseInt(document.getElementById('f-committee').value);
-  const gth       = document.getElementById('f-gth').checked;
-  const mod       = document.getElementById('f-mod').checked;
-  const editId    = document.getElementById('edit-id').value;
+  const name = document.getElementById('f-name').value.trim();
+  const r    = parseFloat(document.getElementById('f-rehosp').value);
+  const l    = parseFloat(document.getElementById('f-los').value);
+  const p    = parseFloat(document.getElementById('f-patexp').value);
+  const c    = parseInt(document.getElementById('f-committee').value);
+  const g    = document.getElementById('f-gth').checked;
+  const m    = document.getElementById('f-mod').checked;
+  const eid  = document.getElementById('edit-id').value;
 
-  if (!name || isNaN(rehosp) || isNaN(los) || isNaN(patexp)) {
-    alert('Please fill in all required fields (name and all efficiency metrics).');
+  if (!name || isNaN(r) || isNaN(l) || isNaN(p)) {
+    alert('Please fill in name and all efficiency fields.');
     return;
   }
 
-  const entry = { name, rehosp, los, patexp, committee, gth, mod };
-
-  if (editId) {
-    const idx = hospitalists.findIndex(h => h.id === parseInt(editId));
-    if (idx >= 0) hospitalists[idx] = { ...entry, id: parseInt(editId) };
+  const entry = {name, rehosp:r, los:l, patexp:p, committee:c, gth:g, mod:m};
+  if (eid) {
+    const idx = hospitalists.findIndex(h=>h.id===parseInt(eid));
+    if (idx >= 0) hospitalists[idx] = {...entry, id:parseInt(eid)};
   } else {
     entry.id = uid++;
     hospitalists.push(entry);
   }
-
   refresh();
   clearForm();
 }
 
 function clearForm() {
   document.getElementById('edit-id').value = '';
-  ['f-name','f-rehosp','f-los','f-patexp'].forEach(id => document.getElementById(id).value = '');
+  ['f-name','f-rehosp','f-los','f-patexp'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-committee').value = '0';
   document.getElementById('f-gth').checked = false;
   document.getElementById('f-mod').checked = false;
   document.getElementById('prev-eff').textContent  = '—';
   document.getElementById('prev-comm').textContent = '—';
-  document.getElementById('prev-quad').textContent = 'Fill in all fields to preview';
-  document.getElementById('badge-gth').textContent = '+0';
-  document.getElementById('badge-mod').textContent = '+0';
-  document.getElementById('form-title').textContent = 'Add Hospitalist';
-  document.getElementById('form-mode-hint').textContent = 'new entry';
+  document.getElementById('prev-quad').innerHTML   = '<span style="color:var(--fg3)">Complete efficiency fields to preview</span>';
+  document.getElementById('pts-gth').textContent   = '+0';
+  document.getElementById('pts-mod').textContent   = '+0';
+  document.getElementById('form-title').textContent = 'Add / Edit Hospitalist';
+  document.getElementById('form-hint').textContent  = 'manual entry';
   document.getElementById('btn-submit').textContent = 'Add to Matrix';
 }
 
 function editRow(id) {
-  const h = hospitalists.find(x => x.id === id);
+  const h = hospitalists.find(x=>x.id===id);
   if (!h) return;
-  document.getElementById('edit-id').value  = id;
-  document.getElementById('f-name').value   = h.name;
-  document.getElementById('f-rehosp').value = h.rehosp;
-  document.getElementById('f-los').value    = h.los;
-  document.getElementById('f-patexp').value = h.patexp;
-  document.getElementById('f-committee').value = h.committee;
-  document.getElementById('f-gth').checked  = h.gth;
-  document.getElementById('f-mod').checked  = h.mod;
-  document.getElementById('form-title').textContent    = 'Edit Hospitalist';
-  document.getElementById('form-mode-hint').textContent = 'editing';
-  document.getElementById('btn-submit').textContent    = 'Update Matrix';
+  document.getElementById('edit-id').value       = id;
+  document.getElementById('f-name').value        = h.name;
+  document.getElementById('f-rehosp').value      = h.rehosp;
+  document.getElementById('f-los').value         = h.los;
+  document.getElementById('f-patexp').value      = h.patexp;
+  document.getElementById('f-committee').value   = Math.min(h.committee,2);
+  document.getElementById('f-gth').checked       = h.gth;
+  document.getElementById('f-mod').checked       = h.mod;
+  document.getElementById('form-title').textContent = `Editing: ${h.name}`;
+  document.getElementById('form-hint').textContent  = 'editing';
+  document.getElementById('btn-submit').textContent = 'Update';
   calcPreview();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function deleteRow(id) {
-  const h = hospitalists.find(x => x.id === id);
-  if (!h) return;
-  if (!confirm(`Remove ${h.name} from the matrix?`)) return;
-  hospitalists = hospitalists.filter(x => x.id !== id);
+  const h = hospitalists.find(x=>x.id===id);
+  if (!h || !confirm(`Remove ${h.name}?`)) return;
+  hospitalists = hospitalists.filter(x=>x.id!==id);
   refresh();
-  clearForm();
+  if (document.getElementById('edit-id').value == id) clearForm();
 }
 
-// ═══════════════════════════════════════════
-//  METHODOLOGY PANEL
-// ═══════════════════════════════════════════
-function toggleMethod() {
+function toggleMeth() {
   document.getElementById('meth-btn').classList.toggle('open');
   document.getElementById('meth-body').classList.toggle('open');
 }
 
-// ═══════════════════════════════════════════
-//  REFRESH ALL
-// ═══════════════════════════════════════════
-function refresh() {
-  refreshKPIs();
-  renderTable();
-  refreshChart();
-}
+// ═══════════════════════════════════════
+//  REFRESH
+// ═══════════════════════════════════════
+function refresh() { refreshKPIs(); renderTable(); refreshChart(); }
 
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
 //  INIT
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
 document.getElementById('hdr-date').textContent =
-  new Date().toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+  new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
 
 initChart();
 refresh();

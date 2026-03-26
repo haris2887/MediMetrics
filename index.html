@@ -260,7 +260,7 @@
     /* ── Responsive ─── */
     @media (max-width:960px) {
       .main { grid-template-columns:1fr; }
-      .chart-inner { min-height:380px; }
+      .chart-inner { min-height:480px; }
       .kpi-strip { grid-template-columns:repeat(2,1fr); }
     }
     @media (max-width:600px) {
@@ -268,6 +268,9 @@
       .kpi-strip { padding:12px 14px 0; grid-template-columns:repeat(2,1fr); }
       .hdr-right .chip:first-child { display:none; }
       .tbl th:nth-child(n+5):not(:nth-last-child(-n+2)), .tbl td:nth-child(n+5):not(:nth-last-child(-n+2)) { display:none; }
+      .chart-inner { min-height:420px; padding:10px; }
+      .q-legend { grid-template-columns:1fr 1fr; gap:6px; padding:8px 12px 12px; }
+      .q-legend .q-item { font-size:.65rem; }
     }
 
     @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
@@ -684,26 +687,36 @@ const quadPlugin = {
     ctx.beginPath(); ctx.moveTo(left,my);  ctx.lineTo(right,my);  ctx.stroke();
     ctx.setLineDash([]);
 
-    // Quadrant labels
-    ctx.font = 'bold 9px Outfit,sans-serif';
-    [['CHAMPIONS',           'rgba(16,185,129,.3)', mx+8, top+14],
-     ['COMMITTED IMPROVERS', 'rgba(14,165,233,.3)', left+8, top+14],
-     ['DEVELOPMENT PRIORITY','rgba(239,68,68,.3)',  left+8, bottom-8],
-     ['SOLO PERFORMERS',     'rgba(245,158,11,.3)', mx+8,  bottom-8],
+    // Quadrant labels — scale font and abbreviate with chart width
+    const chartW = right - left;
+    const qFontSize = chartW < 380 ? 7 : chartW < 550 ? 8 : 9;
+    ctx.font = `bold ${qFontSize}px Outfit,sans-serif`;
+    const s = chartW < 420; // short labels
+    [
+      [s?'CHAMPS'         :'CHAMPIONS',           'rgba(16,185,129,.3)', mx+6,   top+13],
+      [s?'COMM. IMPROVERS':'COMMITTED IMPROVERS',  'rgba(14,165,233,.3)', left+6, top+13],
+      [s?'DEV. PRIORITY'  :'DEVELOPMENT PRIORITY', 'rgba(239,68,68,.3)',  left+6, bottom-7],
+      [s?'SOLO PERF.'     :'SOLO PERFORMERS',      'rgba(245,158,11,.3)', mx+6,   bottom-7],
     ].forEach(([t,c,tx,ty]) => { ctx.fillStyle=c; ctx.fillText(t,tx,ty); });
 
     ctx.restore();
   },
   afterDraw(chart) {
-    const {ctx, scales:{x,y}} = chart;
+    const {ctx, chartArea:{left,right}, scales:{x,y}} = chart;
     if (!x || !y) return;
+    const chartW = right - left;
+    // On narrow charts (<480px wide) skip name labels — use tooltip on tap instead
+    if (chartW < 480) return;
     ctx.save();
-    ctx.font = '11px Outfit,sans-serif';
+    // Use shorter first-name only when moderately narrow
+    const shortNames = chartW < 650;
+    ctx.font = `${chartW < 650 ? 9 : 11}px Outfit,sans-serif`;
     ctx.fillStyle = 'rgba(220,232,255,.65)';
     chart.data.datasets.forEach(ds => {
       ds.data.forEach(pt => {
         const px = x.getPixelForValue(pt.x), py = y.getPixelForValue(pt.y);
-        ctx.fillText(pt._name, px + 9, py + 4);
+        const label = shortNames ? pt._name.split(' ')[0] : pt._name;
+        ctx.fillText(label, px + 7, py + 4);
       });
     });
     ctx.restore();
@@ -733,8 +746,8 @@ function buildDatasets() {
       backgroundColor: PALETTE[i % PALETTE.length] + 'bb',
       borderColor:     PALETTE[i % PALETTE.length],
       borderWidth: 2,
-      pointRadius: 9,
-      pointHoverRadius: 13,
+      pointRadius: window.innerWidth < 500 ? 6 : 9,
+      pointHoverRadius: window.innerWidth < 500 ? 9 : 13,
     };
   });
 }
@@ -746,10 +759,21 @@ function initChart() {
     data: { datasets: buildDatasets() },
     options: {
       responsive: true, maintainAspectRatio: false,
+      onResize(chart, size) {
+        const narrow = size.width < 500;
+        chart.options.plugins.legend.position = narrow ? 'bottom' : 'right';
+        chart.options.plugins.legend.labels.font.size = narrow ? 9 : 10;
+        chart.options.plugins.legend.labels.padding   = narrow ? 6 : 10;
+        chart.options.scales.x.title.font.size = narrow ? 10 : 12;
+        chart.options.scales.y.title.font.size = narrow ? 10 : 12;
+        // Adjust point sizes
+        const r = narrow ? 6 : 9, hr = narrow ? 9 : 13;
+        chart.data.datasets.forEach(ds => { ds.pointRadius = r; ds.pointHoverRadius = hr; });
+      },
       plugins: {
         legend: {
-          position: 'right',
-          labels: { usePointStyle:true, pointStyleWidth:8, font:{size:10}, padding:10, boxHeight:8 }
+          position: window.innerWidth < 500 ? 'bottom' : 'right',
+          labels: { usePointStyle:true, pointStyleWidth:8, font:{size: window.innerWidth < 500 ? 9 : 10}, padding: window.innerWidth < 500 ? 6 : 10, boxHeight:8 }
         },
         tooltip: {
           callbacks: {
